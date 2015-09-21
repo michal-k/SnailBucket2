@@ -1,0 +1,12 @@
+<h1>Who are we?</h1>
+<p>Snail Bucket is a community of chess enthusiasts playing at
+  <a href="http://www.freechess.org">FICS</a>. Our goal is to offer
+  our members tournaments with slow time controls (games often last
+  over 2 hours). 
+<h1>News</h1>
+  <div ng-controller="NewsCtrl">
+  <ul ng-repeat="newsitem in newsitems">
+    <span><b>{{newsitem.date}}</b>: <div ng-bind-html="newsitem.text"</span>
+  </ul>
+  <p> <a href="javascript:alert('Not working yet! :)'">Older news...</a>
+  </div>
