@@ -10,17 +10,18 @@
   <script src="controllers.js"></script>
 </head>
 <body>
+<div ng-controller="ViewCtrl">
+<div ng-controller="TournamentsCtrl">
 <table align="center">
 <tr>
   <!-- Left menu -->
   <td valign="top" style="width:200px; padding:20px;">
     <img src="logo_small.png" alt="Snail Bucket logo"></img>
     <h4>Ongoing tournaments:</h4>
-    <div ng-controller="TournamentsCtrl">
     <div ng-repeat="tourn in tournaments">
       <span>{{tourn.name}}</span>
       <ul>
-      <li><a href="">Standings</a></li>
+      <li id="standings" role="presentation" ng-click="changeView('standings'); setTournamentId(tourn.id)"><a href="#">Standings</a></li>
       <li>Pairings:
       <ul ng-repeat="round in tourn.rounds">
         <li><a href="">Round {{round}}</a></li>
@@ -30,12 +31,11 @@
       <li><a href="">Tournament guide</a></li>
       </ul>
     </div>
-    </div>
   </td>
   <!-- Main page -->
   <td style="width:700px; padding:20px;" valign="top">
-    <div class="panel panel-default" ng-controller="ViewCtrl">
-    <ul class="nav nav-tabs nav-justified">
+    <div class="panel panel-default">
+    <ul class="nav nav-pills nav-justified">
     <li id="main" role="presentation" class="active" ng-click="changeView('main')"><a href="#">Main</a></li>
     <li id="howtojoin" role="presentation" ng-click="changeView('howtojoin')"><a href="#">How to join</a></li>
     <li id="archive" role="presentation" ng-click="changeView('archive')"><a href="#">Tournament archive</a></li>
@@ -45,5 +45,7 @@
   </td>
 </tr>
 </table>
+</div>
+</div>
 </body>
 </html>
