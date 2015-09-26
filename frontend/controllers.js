@@ -2,9 +2,6 @@ var snailBucketApp = angular.module('snailBucketApp', []);
 
 snailBucketApp.controller('TournamentsCtrl', function ($scope) {
   $scope.tournaments = [
-    { 'id': 4,
-      'name': 'Snail Bucket 4',
-      'rounds': [] },
     { 'id': 3,
       'name': 'Snail Bucket Monthly 2015',
       'rounds': ['1'] }
