@@ -4,7 +4,7 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
   $scope.tournaments = [
     { 'id': 4,
       'name': 'Snail Bucket 4',
-      'rounds': ['1', '2', '3'] },
+      'rounds': [] },
     { 'id': 3,
       'name': 'Snail Bucket Monthly 2015',
       'rounds': ['1'] }
@@ -17,31 +17,80 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
       'headers': [
         {'text': 'No', 'width': '30px'},
         {'text': 'Name', 'width': '250px'},
-	{'text': 'Pts', 'width': '40px'},
-	{'text': 'Bch', 'wiDTH': '40px'},
-	{'text': 'Gms', 'width': '40px'}
+        {'text': 'Pts', 'width': '40px'},
+        {'text': 'Bch', 'wiDTH': '40px'},
+        {'text': 'Gms', 'width': '40px'}
       ],
       'buckets':
       [{
         'name': 'Havana',
-	'rows': 
-	[
-	  ['1', 'yoyoman', '2.0', '1.0', '2'],
-	  ['2', 'PeterSanderson', '2.0', '1.0', '2'],
-	  ['3', 'oakwell', '2.0', '0.5', '2'],
-	  ['4', 'PankracyRozumek', '0.5', '0.5', '1']
-	]
+        'rows': 
+        [
+          ['1', 'yoyoman', '2.0', '1.0', '2'],
+          ['2', 'PeterSanderson', '2.0', '1.0', '2'],
+          ['3', 'oakwell', '2.0', '0.5', '2'],
+          ['4', 'PankracyRozumek', '0.5', '0.5', '1']
+        ]
       },
       {
         'name': 'Reykjavik',
-	'rows': 
-	[
-	  ['1', 'RoyRogersC', '2.0', '1.0', '2'],
-	  ['2', 'crem', '2.0', '1.0', '2'],
-	  ['3', 'ciedan', '2.0', '0.5', '2'],
-	  ['4', 'Nitreb', '0.5', '0.5', '1']
-	]
+        'rows': 
+        [
+          ['1', 'RoyRogersC', '2.0', '1.0', '2'],
+          ['2', 'crem', '2.0', '1.0', '2'],
+          ['3', 'ciedan', '2.0', '0.5', '2'],
+          ['4', 'Nitreb', '0.5', '0.5', '1']
+        ]
       }]
+    }
+  ];
+
+  $scope.pairings = [
+    {
+      'tournId' : 3,
+      'name': 'Snail Bucket Monthly 2015',
+      'round': 1,
+      'buckets':
+      [
+      {
+        'name': 'Havana',
+        'games': [
+          {
+            'white': 'PankracyRozumek',
+            'black': 'pchesso',
+            'result': '1/2-1/2',
+            'date': '',
+            'forum': ''
+          },
+          {
+            'white': 'BethanyGrace',
+            'black': 'Nitreb',
+            'result': '',
+            'date': '2015-09-30 12:34',
+            'forum': ''
+          }
+        ]
+      },
+      {
+        'name': 'Reykjavik',
+        'games': [
+          {
+            'white': 'crem',
+            'black': 'nitedozer',
+            'result': '',
+            'date': '',
+            'forum': ''
+          },
+          {
+            'white': 'RoyRogersC',
+            'black': 'marjohn',
+            'result': '+:-',
+            'date': '',
+            'forum': ''
+          }
+        ]
+      }
+      ]
     }
   ];
 
@@ -49,7 +98,16 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
     for (var i = 0; i < $scope.standings.length; i++) {
       if ($scope.standings[i].tournId == tournId) {
         $scope.currStandings = $scope.standings[i];
-	return;
+        return;
+      }
+    }
+  };
+
+  $scope.setRound = function(tournId, round) {
+    for (var i = 0; i < $scope.pairings.length; i++) {
+      if ($scope.pairings[i].tournId == tournId && $scope.pairings[i].round == round) {
+        $scope.currPairings = $scope.pairings[i];
+        return;
       }
     }
   };

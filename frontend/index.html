@@ -24,7 +24,7 @@
       <li id="standings" role="presentation" ng-click="changeView('standings'); setTournamentId(tourn.id)"><a href="#">Standings</a></li>
       <li>Pairings:
       <ul ng-repeat="round in tourn.rounds">
-        <li><a href="">Round {{round}}</a></li>
+        <li id="pairings" role="presentation" ng-click="changeView('pairings'); setRound(tourn.id, round)"><a href="#">Round {{round}}</a></li>
       </ul>
       </li>
       <li><a href="">Pending games</a></li>
