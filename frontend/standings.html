@@ -10,7 +10,11 @@
   </th>
 </tr>
 <tr ng-repeat="row in bucket.rows">
-  <td ng-repeat="column in row track by $index" style="border: 1px solid black; padding: 2px">{{column}}</td>
+  <td ng-repeat="column in row track by $index" style="border: 1px solid black; padding: 2px">
+    <div ng-show="'{{column}}'.indexOf('fl:')==0">
+      <img src="{{column | toFlag}}" alt="{{column}}"></img></div>
+    <div ng-show="'{{column}}'.indexOf('fl:')!=0">{{column}}</div>
+  </td>
 </tr>
 </table>
 </div>

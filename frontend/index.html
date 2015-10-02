@@ -7,24 +7,23 @@
   <script src="jquery-1.11.3.min.js"></script>
   <script src="bootstrap.min.js"></script>
   <script src="angular.min.js"></script>
+  <script src="angular-ui-router.min.js"></script>
   <script src="controllers.js"></script>
 </head>
-<body>
-<div ng-controller="ViewCtrl">
-<div ng-controller="TournamentsCtrl">
+<body class="container" ng-controller="TournamentsCtrl">
 <table align="center">
 <tr>
   <!-- Left menu -->
   <td valign="top" style="width:200px; padding:20px;">
-    <img src="logo_small.png" alt="Snail Bucket logo"></img>
+    <a ui-sref="main"><img src="logo_small.png" alt="Snail Bucket logo"></img></a>
     <h4>Ongoing tournaments:</h4>
     <div ng-repeat="tourn in tournaments">
       <span>{{tourn.name}}</span>
       <ul>
-      <li id="standings" role="presentation" ng-click="changeView('standings'); setTournamentId(tourn.id)"><a href="#">Standings</a></li>
-      <li>Pairings:
+      <li><a ui-sref="standings({tournId: tourn.id})">Standings</a></li>
+      <li ng-show="tourn.rounds.length > 0">Pairings:
       <ul ng-repeat="round in tourn.rounds">
-        <li id="pairings" role="presentation" ng-click="changeView('pairings'); setRound(tourn.id, round)"><a href="#">Round {{round}}</a></li>
+        <li><a ui-sref="pairings({tournId: tourn.id, round: round})">Round {{round}}</a></li>
       </ul>
       </li>
       <li><a href="">Pending games</a></li>
@@ -36,16 +35,14 @@
   <td style="width:700px; padding:20px;" valign="top">
     <div class="panel panel-default">
     <ul class="nav nav-pills nav-justified">
-    <li id="main" role="presentation" class="active" ng-click="changeView('main')"><a href="#">Main</a></li>
-    <li id="howtojoin" role="presentation" ng-click="changeView('howtojoin')"><a href="#">How to join</a></li>
-    <li id="archive" role="presentation" ng-click="changeView('archive')"><a href="#">Tournament archive</a></li>
+    <li><a ui-sref="main">Main</a></li>
+    <li><a ui-sref="howtojoin">How to join</a></li>
+    <li><a ui-sref="archive">Tournament archive</a></li>
    </ul>
-    <div ng-include="getCurrent()" style="margin:20px;"> </div>
+    <div class="well" ui-view></div>
     </div>
   </td>
 </tr>
 </table>
-</div>
-</div>
 </body>
 </html>

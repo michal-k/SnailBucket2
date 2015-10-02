@@ -5,12 +5,16 @@
 <h3>Bucket {{bucket.name}}</h3>
 <table style="border: 1px solid black; padding: 2px">
 <tr ng-repeat="game in bucket.games">
-  <td style="border: 1px solid black; width: 200px">{{game.white}}</td>
+  <td style="border: 1px solid black; width: 200px">
+    <span style="width: 20px"><img src="images/flags/{{game.whCountry}}.png" alt="{{game.whCountry}}"></img></span>
+    {{game.white}}</td>
   <td style="border: 1px solid black; width: 130px; text-align: center">
     <div ng-show="{{game.result.length>0}}"><a href="#">{{game.result}}</a></div>
     <div ng-show="{{game.result.length==0 && game.date.length>0}}">{{game.date}}</div>
   </a></td>
-  <td style="border: 1px solid black; width: 200px">{{game.black}}</td>
+  <td style="border: 1px solid black; width: 200px">
+    <span style="width: 20px"><img src="images/flags/{{game.blCountry}}.png" alt="{{game.blCountry}}"></img></span>
+    {{game.black}}</td>
   <td style="border: 1px solid black; width: 80px"><a href="#">game forum</a></td>
 </tr>
 </table>

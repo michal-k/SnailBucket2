@@ -1,47 +1,137 @@
-var snailBucketApp = angular.module('snailBucketApp', []);
+var snailBucketApp = angular.module('snailBucketApp', ['ui.router']);
+
+snailBucketApp.config(function($stateProvider, $urlRouterProvider) {
+  // Default.
+  $urlRouterProvider.otherwise('/main');
+
+  $stateProvider
+    .state('main', {
+      url: '/main',
+      templateUrl: 'main.html'
+    })
+    .state('howtojoin', {
+      url: '/howtojoin',
+      templateUrl: 'howtojoin.html'
+    })
+    .state('archive', {
+      url: '/archive',
+      templateUrl: 'archive.html'
+    })
+    .state('standings', {
+      url: '/:tournId/standings',
+      templateUrl: 'standings.html',
+      controller: function($scope, $stateParams) {
+        $scope.currTournId = $stateParams.tournId;
+      }
+    })
+    .state('pairings', {
+      url: '/:tournId/pairings/:round',
+      templateUrl: 'pairings.html',
+      controller: function($scope, $stateParams) {
+        $scope.currTournId = $stateParams.tournId;
+        $scope.currRound = $stateParams.round;
+      }
+    })
+    ;
+});
+
+snailBucketApp.filter('toFlag', function() {
+  return function(val) {
+    country = val
+    if (val.search('fl:') == 0) {
+      country = val.substring(3);
+    }
+    return 'images/flags/' + country + '.png';
+  }
+});
 
 snailBucketApp.controller('TournamentsCtrl', function ($scope) {
+  // Replace with reading from the backend.
   $scope.tournaments = [
-    { 'id': 3,
+    {
+      'id': 3,
       'name': 'Snail Bucket Monthly 2015',
-      'rounds': ['1'] }
+      'rounds': ['1']
+    },
+    {
+      'id': 4,
+      'name': 'Snail Bucket 4',
+      'rounds': []
+    },
   ];
 
+  // Replace with reading from the backend.
   $scope.standings = [
     {
       'tournId': 3,
       'name': 'Snail Bucket Monthly 2015',
       'headers': [
         {'text': 'No', 'width': '30px'},
+        {'text': 'Ctr', 'width': '20px'},
         {'text': 'Name', 'width': '250px'},
         {'text': 'Pts', 'width': '40px'},
-        {'text': 'Bch', 'wiDTH': '40px'},
-        {'text': 'Gms', 'width': '40px'}
+        {'text': 'Buch', 'width': '40px'},
+        {'text': 'Gams', 'width': '40px'}
       ],
       'buckets':
       [{
         'name': 'Havana',
         'rows': 
         [
-          ['1', 'yoyoman', '2.0', '1.0', '2'],
-          ['2', 'PeterSanderson', '2.0', '1.0', '2'],
-          ['3', 'oakwell', '2.0', '0.5', '2'],
-          ['4', 'PankracyRozumek', '0.5', '0.5', '1']
+          ['1', 'fl:--', 'yoyoman', '2.0', '1.0', '2'],
+          ['2', 'fl:us', 'PeterSanderson', '2.0', '1.0', '2'],
+          ['3', 'fl:gb', 'oakwell', '2.0', '0.5', '2'],
+          ['4', 'fl:pl', 'PankracyRozumek', '0.5', '0.5', '1']
         ]
       },
       {
         'name': 'Reykjavik',
         'rows': 
         [
-          ['1', 'RoyRogersC', '2.0', '1.0', '2'],
-          ['2', 'crem', '2.0', '1.0', '2'],
-          ['3', 'ciedan', '2.0', '0.5', '2'],
-          ['4', 'Nitreb', '0.5', '0.5', '1']
+          ['1', 'fl:us', 'RoyRogersC', '2.0', '1.0', '2'],
+          ['2', 'fl:by', 'crem', '2.0', '1.0', '2'],
+          ['3', 'fl:de', 'ciedan', '2.0', '0.5', '2'],
+          ['4', 'fl:ca', 'Nitreb', '0.5', '0.5', '1']
+        ]
+      }]
+    },
+    {
+      'tournId': 4,
+      'name': 'Snail Bucket 4',
+      'headers': [
+        {'text': 'No', 'width': '30px'},
+        {'text': 'Ctr', 'width': '20px'},
+        {'text': 'Name', 'width': '250px'},
+        {'text': 'Pts', 'width': '40px'},
+        {'text': 'Wins', 'width': '40px'},
+        {'text': 'Whit', 'width': '40px'},
+        {'text': 'Gams', 'width': '40px'}
+      ],
+      'buckets':
+      [{
+        'name': 'Alekhine',
+        'rows': 
+        [
+          ['1', 'fl:--', 'yoyoman', '2.0', '2', '0', '2'],
+          ['2', 'fl:us', 'PeterSanderson', '2.0', '2', '1', '2'],
+          ['3', 'fl:gb', 'oakwell', '2.0', '2', '1', '2'],
+          ['4', 'fl:pl', 'PankracyRozumek', '0.5', '0', '2', '1']
+        ]
+      },
+      {
+        'name': 'Botvinnik',
+        'rows': 
+        [
+          ['1', 'fl:us', 'RoyRogersC', '2.0', '2', '1', '2'],
+          ['2', 'fl:by', 'crem', '2.0', '2', '1', '2'],
+          ['3', 'fl:de', 'ciedan', '2.0', '', '1', '2'],
+          ['4', 'fl:ca', 'Nitreb', '0.5', '0', '1', '1']
         ]
       }]
     }
   ];
 
+  // Replace with reading from the backend.
   $scope.pairings = [
     {
       'tournId' : 3,
@@ -55,6 +145,8 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
           {
             'white': 'PankracyRozumek',
             'black': 'pchesso',
+            'whCountry': 'pl',
+            'blCountry': 'de',
             'result': '1/2-1/2',
             'date': '',
             'forum': ''
@@ -62,6 +154,8 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
           {
             'white': 'BethanyGrace',
             'black': 'Nitreb',
+            'whCountry': 'us',
+            'blCountry': 'ca',
             'result': '',
             'date': '2015-09-30 12:34',
             'forum': ''
@@ -74,6 +168,8 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
           {
             'white': 'crem',
             'black': 'nitedozer',
+            'whCountry': 'by',
+            'blCountry': 'us',
             'result': '',
             'date': '',
             'forum': ''
@@ -81,6 +177,8 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
           {
             'white': 'RoyRogersC',
             'black': 'marjohn',
+            'whCountry': 'us',
+            'blCountry': 'gr',
             'result': '+:-',
             'date': '',
             'forum': ''
@@ -90,27 +188,10 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
       ]
     }
   ];
-
-  $scope.setTournamentId = function(tournId) {
-    for (var i = 0; i < $scope.standings.length; i++) {
-      if ($scope.standings[i].tournId == tournId) {
-        $scope.currStandings = $scope.standings[i];
-        return;
-      }
-    }
-  };
-
-  $scope.setRound = function(tournId, round) {
-    for (var i = 0; i < $scope.pairings.length; i++) {
-      if ($scope.pairings[i].tournId == tournId && $scope.pairings[i].round == round) {
-        $scope.currPairings = $scope.pairings[i];
-        return;
-      }
-    }
-  };
 });
 
 snailBucketApp.controller('NewsCtrl', function ($scope, $sce) {
+  // Replace with reading from the backend.
   $scope.newsitems = [
     { 'date': 'Wed, 9th Sep 2015',
       'text': $sce.trustAsHtml('We have generated Round 2 pairings. We would like to thank you for your patience, and ask you to report any problems to us. The initial deadline will be 12th September.') },
@@ -125,14 +206,3 @@ snailBucketApp.controller('NewsCtrl', function ($scope, $sce) {
   ];
 });
 
-snailBucketApp.controller('ViewCtrl', function ($scope) {
-  $scope.currentView = 'main';
-  $scope.changeView = function(newView) {
-    $( "li" ).removeClass('active');
-    $scope.currentView = newView;
-    $( '#' + newView ).addClass('active');
-  };
-  $scope.getCurrent = function() {
-    return $scope.currentView + '.html';
-  };
-});
