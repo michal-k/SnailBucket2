@@ -4,17 +4,18 @@
   <meta charset="utf-8">
   <title>Snail Bucket</title>
   <link rel="stylesheet" href="bootstrap.min.css">
+  <link rel="stylesheet" href="snailbucket.css">
   <script src="jquery-1.11.3.min.js"></script>
   <script src="bootstrap.min.js"></script>
   <script src="angular.min.js"></script>
   <script src="angular-ui-router.min.js"></script>
   <script src="controllers.js"></script>
 </head>
-<body class="container" ng-controller="TournamentsCtrl">
+<body ng-controller="TournamentsCtrl">
 <table align="center">
 <tr>
   <!-- Left menu -->
-  <td valign="top" style="width:200px; padding:20px;">
+  <td valign="top" style="width:150px; padding:20px;">
     <a ui-sref="main"><img src="logo_small.png" alt="Snail Bucket logo"></img></a>
     <h4>Ongoing tournaments:</h4>
     <div ng-repeat="tourn in tournaments">
@@ -32,7 +33,7 @@
     </div>
   </td>
   <!-- Main page -->
-  <td style="width:700px; padding:20px;" valign="top">
+  <td class="mainwidth" style="padding:20px;" valign="top">
     <div class="panel panel-default">
     <ul class="nav nav-pills nav-justified">
     <li><a ui-sref="main">Main</a></li>

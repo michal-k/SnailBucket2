@@ -1,16 +1,15 @@
-<div ng-repeat="standing in standings">
-<div ng-show="standing.tournId == {{currTournId}}">
+<div ng-init="getStandings(currTournId)">
 <h1>{{standing.name}}</h1>
 <div ng-repeat="bucket in standing.buckets">
 <h3>Bucket {{bucket.name}}</h3>
-<table style="border: 1px solid black; padding: 2px">
+<table class="border margin" style="width: 100%">
 <tr>
-  <th ng-repeat="header in standing.headers" style="border: 1px solid black; padding: 2px">
+  <th ng-repeat="header in standing.headers" class="border margin">
     <div style="width: {{header.width}}">{{header.text}}</div>
   </th>
 </tr>
 <tr ng-repeat="row in bucket.rows">
-  <td ng-repeat="column in row track by $index" style="border: 1px solid black; padding: 2px">
+  <td ng-repeat="column in row track by $index" class="border margin">
     <div ng-show="'{{column}}'.indexOf('fl:')==0">
       <img src="{{column | toFlag}}" alt="{{column}}"></img></div>
     <div ng-show="'{{column}}'.indexOf('fl:')!=0">{{column}}</div>
