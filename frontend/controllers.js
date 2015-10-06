@@ -46,16 +46,7 @@ snailBucketApp.config(function($stateProvider, $urlRouterProvider) {
       templateUrl: 'forum.html',
       controller: function($scope, $stateParams, $interval) {
         $scope.currTournId = $stateParams.tournId;
-        for (var tourn = 0; tourn < $scope.pairings.length; tourn++) {
-          for (var bucket = 0; bucket < $scope.pairings[tourn].buckets.length; bucket++) {
-            for (var game = 0; game < $scope.pairings[tourn].buckets[bucket].games.length; game++) {
-              if ($scope.pairings[tourn].buckets[bucket].games[game].id == $stateParams.gameId) {
-                $scope.currGame = $scope.pairings[tourn].buckets[bucket].games[game];
-                break;
-              }
-            }
-          }
-        }
+        $scope.gameId = $stateParams.gameId;
         var setTime = function() {
           now = new Date();
           $scope.localTime = formatDate(now.getFullYear(), now.getMonth(),
@@ -234,6 +225,60 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
             ]
           }]
         }
+    }
+  };
+
+  // Replace with reading from the backend.
+  $scope.getGame = function(gameId) {
+    switch(gameId) {
+      case '1':
+        $scope.currGame = {
+                'id': 1,
+                'white': 'PankracyRozumek',
+                'black': 'pchesso',
+                'whCountry': 'pl',
+                'blCountry': 'de',
+                'result': '1/2-1/2',
+                'date': '',
+                'forum': ''
+              };
+        break;
+      case '2':
+        $scope.currGame = {
+                'id': 2,
+                'white': 'BethanyGrace',
+                'black': 'Nitreb',
+                'whCountry': 'us',
+                'blCountry': 'ca',
+                'result': '',
+                'date': '2015-09-30 12:34',
+                'forum': ''
+              };
+        break;
+      case '3':
+        $scope.currGame = {
+                'id': 3,
+                'white': 'crem',
+                'black': 'nitedozer',
+                'whCountry': 'by',
+                'blCountry': 'us',
+                'result': '',
+                'date': '',
+                'forum': ''
+              };
+        break;
+      case '4':
+        $scope.currGame = {
+                'id': 4,
+                'white': 'RoyRogersC',
+                'black': 'marjohn',
+                'whCountry': 'us',
+                'blCountry': 'gr',
+                'result': '+:-',
+                'date': '',
+                'forum': ''
+              }
+        break;
     }
   };
 
