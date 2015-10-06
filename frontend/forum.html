@@ -28,6 +28,20 @@
 </tr>
 </table>
 <div class="bottom-space">Time control: <strong>{{getTimeControl(currGame.id)}}</strong></div>
-<div class="bottom-space">TODO: Messages</div>
-<div>TODO: New message/set time</div>
+<div class="bottom-space" ng-show="currGame.date.length">
+Scheduled for: <strong>{{currGame.date}}</strong>
+</div>
+<div class="bottom-space" ng-repeat="message in currGame.messages">
+Message by {{message.by}} on {{message.date}}:
+<pre>
+{{message.text}}
+</pre>
+</div>
+<div class="bottom-space">
+  Type your new message:<br/>
+  <form name="newMessage" novalidate ng-submit="submit()" ng-controller="TournamentsCtrl">
+  <textarea ng-model="msg" name="msg" rows="15" style="width:100%"></textarea><br/>
+  <input type="submit" id="submit" value="Submit">
+  </form>
+</div>
 </div>

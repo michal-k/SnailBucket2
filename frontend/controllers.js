@@ -5,7 +5,7 @@ prefix0 = function(value) {
 }
 
 formatDate = function(year, month, day, hour, minute) {
-  return year + '-' + prefix0(month) + '-' + prefix0(day) + ' ' +
+  return year + '-' + prefix0(month+1) + '-' + prefix0(day) + ' ' +
       prefix0(hour) + ':' + prefix0(minute);
 }
 
@@ -185,7 +185,6 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
                 'blCountry': 'de',
                 'result': '1/2-1/2',
                 'date': '',
-                'forum': ''
               },
               {
                 'id': 2,
@@ -195,7 +194,6 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
                 'blCountry': 'ca',
                 'result': '',
                 'date': '2015-09-30 12:34',
-                'forum': ''
               }
             ]
           },
@@ -210,7 +208,6 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
                 'blCountry': 'us',
                 'result': '',
                 'date': '',
-                'forum': ''
               },
               {
                 'id': 4,
@@ -220,7 +217,6 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
                 'blCountry': 'gr',
                 'result': '+:-',
                 'date': '',
-                'forum': ''
               }
             ]
           }]
@@ -240,7 +236,18 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
                 'blCountry': 'de',
                 'result': '1/2-1/2',
                 'date': '',
-                'forum': ''
+                'messages': [
+                  {
+                    date: '2015-10-02 23:23 GMT',
+                    by: 'pchesso',
+                    text: 'Agreed!'
+                  },
+                  {
+                    date: '2015-10-01 12:34 GMT',
+                    by: 'PankracyRozumek',
+                    text: 'What about unplayed draw?'
+                  }
+                ]
               };
         break;
       case '2':
@@ -252,7 +259,7 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
                 'blCountry': 'ca',
                 'result': '',
                 'date': '2015-09-30 12:34',
-                'forum': ''
+                'messages': []
               };
         break;
       case '3':
@@ -264,7 +271,7 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
                 'blCountry': 'us',
                 'result': '',
                 'date': '',
-                'forum': ''
+                'messages': []
               };
         break;
       case '4':
@@ -276,7 +283,7 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
                 'blCountry': 'gr',
                 'result': '+:-',
                 'date': '',
-                'forum': ''
+                'messages': []
               }
         break;
     }
@@ -307,13 +314,36 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
         return '120 30';
     }
   }
+
+  $scope.getUser = function() {
+    return "PankracyRozumek";
+  };
+
+  $scope.getGmtTime = function(){
+    return formatDate(now.getUTCFullYear(), now.getUTCMonth(),
+       now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes()) + " GMT";
+  };
+
+  $scope.msg ='';
+
+  // Replace with sending to backend.
+  $scope.submit = function() {
+    $scope.currGame.messages.unshift(
+      {
+        'date': $scope.getGmtTime(),
+        'by': $scope.getUser(),
+        'text': $scope.msg
+      }
+    );
+    $scope.msg = '';
+  };
 });
 
 snailBucketApp.controller('NewsCtrl', function ($scope, $sce) {
   // Replace with reading from the backend.
   $scope.newsitems = [
     { 'date': 'Wed, 9th Sep 2015',
-      'text': $sce.trustAsHtml('We have generated Round 2 pairings. We would like to thank you for your patience, and ask you to report any problems to us. The initial deadline will be 12th September.') },
+     'text': $sce.trustAsHtml('We have generated Round 2 pairings. We would like to thank you for your patience, and ask you to report any problems to us. The initial deadline will be 12th September.') },
     { 'date': 'Sat, 5th Sep 2015',
       'text': $sce.trustAsHtml('We have a major software problem and cannot currently create new pairings for the Monthly. The start of round 2 will be delayed by one week. We\'d like to apologize to all participants.')},
     { 'date': 'Mon, 3rd Aug 2015',
