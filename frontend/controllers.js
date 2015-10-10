@@ -1,13 +1,15 @@
-var snailBucketApp = angular.module('snailBucketApp', ['ui.router']);
+var snailBucketApp = angular.module('snailBucketApp', ['ui.router', 'ui.bootstrap.datetimepicker']);
 
-prefix0 = function(value) {
-  return value.toString().length == 2 ? value : '0' + value;
-}
-
-formatDate = function(year, month, day, hour, minute) {
-  return year + '-' + prefix0(month+1) + '-' + prefix0(day) + ' ' +
-      prefix0(hour) + ':' + prefix0(minute);
-}
+moment.locale('en', {
+  longDateFormat : {
+    LT: "HH:mm",
+    LTS: "HH:mm:ss",
+    L: "YYYY-MM-DD",
+    LL: "Do MMMM YYYY",
+    LLL: "Do MMMM YYYY LT",
+    LLLL: "dddd, Do MMMM YYYY LT"
+ }
+});
 
 snailBucketApp.config(function($stateProvider, $urlRouterProvider) {
   // Default.
@@ -48,11 +50,8 @@ snailBucketApp.config(function($stateProvider, $urlRouterProvider) {
         $scope.currTournId = $stateParams.tournId;
         $scope.gameId = $stateParams.gameId;
         var setTime = function() {
-          now = new Date();
-          $scope.localTime = formatDate(now.getFullYear(), now.getMonth(),
-              now.getDate(), now.getHours(), now.getMinutes());
-          $scope.gmtTime = formatDate(now.getUTCFullYear(), now.getUTCMonth(),
-              now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes());
+          $scope.localTime = moment().format('L LT');
+          $scope.gmtTime = moment.utc().format('L LT');
         };
         setTime();
         $interval(function() {
@@ -238,14 +237,14 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
                 'date': '',
                 'messages': [
                   {
-                    date: '2015-10-02 23:23 GMT',
-                    by: 'pchesso',
-                    text: 'Agreed!'
-                  },
-                  {
-                    date: '2015-10-01 12:34 GMT',
+                    date: 'Thursday, 2015-10-01 12:34 GMT',
                     by: 'PankracyRozumek',
                     text: 'What about unplayed draw?'
+                  },
+                  {
+                    date: 'Friday, 2015-10-02 23:23 GMT',
+                    by: 'pchesso',
+                    text: 'Agreed!'
                   }
                 ]
               };
@@ -258,7 +257,7 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
                 'whCountry': 'us',
                 'blCountry': 'ca',
                 'result': '',
-                'date': '2015-09-30 12:34',
+                'date': 'Wednesday, 2015-09-30 12:34',
                 'messages': []
               };
         break;
@@ -320,22 +319,47 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
   };
 
   $scope.getGmtTime = function(){
-    return formatDate(now.getUTCFullYear(), now.getUTCMonth(),
-       now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes()) + " GMT";
+    return moment.utc().format('dddd, L LT') + ' GMT';
   };
 
   $scope.msg ='';
 
   // Replace with sending to backend.
-  $scope.submit = function() {
-    $scope.currGame.messages.unshift(
-      {
-        'date': $scope.getGmtTime(),
-        'by': $scope.getUser(),
-        'text': $scope.msg
-      }
-    );
-    $scope.msg = '';
+  $scope.submit = function(unsetTime) {
+    if ($scope.msg.text != null && $scope.msg.text.length > 0) {
+      $scope.currGame.messages.push(
+        {
+          'date': $scope.getGmtTime(),
+          'by': $scope.getUser(),
+          'text': $scope.msg.text
+        }
+      );
+    }
+    if (unsetTime == 'unset') {
+      $scope.currGame.messages.push(
+        {
+          'date': $scope.getGmtTime(),
+          'by': $scope.getUser(),
+          'text': $scope.getUser() + ' has unset the time'
+        }
+      );
+      $scope.currGame.date = null;
+    } else if ($scope.msg.parsedDate != null) {
+      $scope.currGame.messages.push(
+        {
+          'date': $scope.getGmtTime(),
+          'by': $scope.getUser(),
+          'text': $scope.getUser() + ' has set the time to ' + $scope.msg.parsedDate + ' GMT'
+        }
+      );
+      $scope.currGame.date = $scope.msg.parsedDate;
+    }
+    $scope.msg.text = '';
+    $scope.msg.parsedDate = null;
+  };
+
+  $scope.onTimeSet = function(newDate, oldDate) {
+    $scope.msg.parsedDate = moment(newDate).format('dddd, YYYY-MM-DD HH:mm');
   };
 });
 

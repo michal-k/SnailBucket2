@@ -29,19 +29,34 @@
 </table>
 <div class="bottom-space">Time control: <strong>{{getTimeControl(currGame.id)}}</strong></div>
 <div class="bottom-space" ng-show="currGame.date.length">
-Scheduled for: <strong>{{currGame.date}}</strong>
+Scheduled for: <strong>{{currGame.date}} GMT</strong>
 </div>
+<hr>
 <div class="bottom-space" ng-repeat="message in currGame.messages">
 Message by {{message.by}} on {{message.date}}:
 <pre>
 {{message.text}}
 </pre>
 </div>
-<div class="bottom-space">
+<div>
   Type your new message:<br/>
-  <form name="newMessage" novalidate ng-submit="submit()" ng-controller="TournamentsCtrl">
-  <textarea ng-model="msg" name="msg" rows="15" style="width:100%"></textarea><br/>
-  <input type="submit" id="submit" value="Submit">
+  <form name="newMessage" novalidate ng-controller="TournamentsCtrl">
+  <textarea class="bottom-space" ng-model="msg.text" name="msg.text" rows="15" style="width:100%"></textarea><br/>
+  <div class="dropdown bottom-space">
+    <a class="dropdown-toggle" id="dropdown1" role="button" data-toggle="dropdown" data-target="#">
+      Choose the agreed date and time</a>
+    <ul class="dropdown-menu" role="menu">
+      <datetimepicker data-ng-model="msg.date"
+          data-datetimepicker-config="{ dropdownSelector: '#dropdown1' }"
+          data-on-set-time="onTimeSet(newDate, oldDate);"/>
+    </ul>
+    <div ng-show="msg.parsedDate">Selected Date: {{msg.parsedDate}}</div>
+  </div>
+  <button class="btn btn-default" ng-disabled="!msg.text && !msg.parsedDate"
+    ng-click="submit('')">
+    Send message and/or submit time</button>
+  <button class="btn pull-right" ng-disabled="!currGame.date" ng-click="submit('unset')">
+    Unset the time</button>
   </form>
 </div>
 </div>
