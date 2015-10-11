@@ -1,0 +1,11 @@
+# Vim temporary files
+.*.swp
+
+# Python compiled files
+*.pyc
+
+# Database
+*.sqlite3
+
+# Generated/collected static files
+/staticfiles.gen/*
