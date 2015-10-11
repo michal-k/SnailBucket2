@@ -2,29 +2,31 @@
 <h3>{{currGame.white}} - {{currGame.black}}</h3>
 <table class="bottom-space" style="width:100%">
 <tr>
-<td class="center" style="width: 50%">Local time: <strong>{{localTime}}</strong></td>
-<td class="center" style="width: 50%">GMT time: <strong>{{gmtTime}}</strong></td>
+  <td class="center" style="width: 50%">Local time: <strong>{{localTime}}</strong></td>
+  <td class="center" style="width: 50%">GMT time: <strong>{{gmtTime}}</strong></td>
 </tr>
 </table>
 <table class="border margin">
 <tr class="border margin">
-<td class="border margin" style="width: 160px"><strong>{{currGame.white}}</strong></td>
-<td class="border margin center twodigits" ng-repeat="avail in getTimes(currGame.white) track by $index" ng-class="avail">
-{{$index}}
-</td>
+  <td class="border margin" style="width: 160px"><strong>{{currGame.white}}</strong></td>
+  <td class="border margin center twodigits"
+      ng-repeat="avail in getTimes(currGame.white) track by $index" ng-class="avail">
+    {{$index}}
+  </td>
 </tr>
 <tr class="border margin">
-<td class="border margin" style="width: 160px"><strong>{{currGame.black}}</strong></td>
-<td class="border margin center twodigits" ng-repeat="avail in getTimes(currGame.black) track by $index" ng-class="avail">
-{{$index}}
-</td>
+  <td class="border margin" style="width: 160px"><strong>{{currGame.black}}</strong></td>
+  <td class="border margin center twodigits"
+      ng-repeat="avail in getTimes(currGame.black) track by $index" ng-class="avail">
+    {{$index}}
+  </td>
 </tr>
 </table>
 <table class="bottom-space" style="width: 100%">
 <tr>
-<td class="center smallfont">White - usually free</td>
-<td class="center smallfont y">Yellow - often busy</td>
-<td class="center smallfont r">Red - always busy</td>
+  <td class="center smallfont">White - usually free</td>
+  <td class="center smallfont y">Yellow - often busy</td>
+  <td class="center smallfont r">Red - always busy</td>
 </tr>
 </table>
 <div class="bottom-space">Time control: <strong>{{getTimeControl(currGame.id)}}</strong></div>
@@ -41,7 +43,8 @@ Message by {{message.by}} on {{message.date}}:
 <div>
   Type your new message:<br/>
   <form name="newMessage" novalidate ng-controller="TournamentsCtrl">
-  <textarea class="bottom-space" ng-model="msg.text" name="msg.text" rows="15" style="width:100%"></textarea><br/>
+  <textarea class="bottom-space" ng-model="msg.text" name="msg.text" rows="15" style="width:100%">
+  </textarea><br/>
   <div class="dropdown bottom-space">
     <a class="dropdown-toggle" id="dropdown1" role="button" data-toggle="dropdown" data-target="#">
       Choose the agreed date and time</a>
