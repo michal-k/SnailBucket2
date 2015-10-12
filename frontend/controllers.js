@@ -28,6 +28,13 @@ snailBucketApp.config(function($stateProvider, $urlRouterProvider) {
       url: '/archive',
       templateUrl: 'archive.html'
     })
+    .state('pending', {
+      url: '/:tournId/pending',
+      templateUrl: 'pending.html',
+      controller: function($scope, $stateParams) {
+        $scope.currTournId = $stateParams.tournId;
+      }
+    })
     .state('standings', {
       url: '/:tournId/standings',
       templateUrl: 'standings.html',
@@ -73,6 +80,36 @@ snailBucketApp.filter('toFlag', function() {
 });
 
 snailBucketApp.controller('TournamentsCtrl', function ($scope) {
+
+  $scope.getDateType = function(dateString) {
+    if (dateString == 'now') {
+      return 'now';
+    }
+    if (moment.utc(dateString) < moment.utc()) {
+      return 'past';
+    }
+    if (moment.utc(dateString).subtract(2, 'hour') < moment.utc()) {
+      return 'soon';
+    }
+    return 'later';
+  };
+
+  $scope.getRemaining = function(dateString) {
+    if (dateString == 'now') {
+      return;
+    }
+    diff = moment.utc(moment(moment.utc(dateString).diff(moment())));
+    minutes = diff.format('mm');
+    hours = diff.format('H');
+    if (hours == '0') {
+      return minutes + ' minutes';
+    }
+    if (hours == '1') {
+      return '1 hour ' + minutes + ' minutes';
+    }
+    return hours + ' hours ' + minutes + ' minutes';
+  };
+
   // Replace with reading from the backend.
   $scope.tournaments = [
     {
@@ -97,7 +134,7 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
           'headers': [
             {'text': 'No', 'width': '30px'},
             {'text': 'Ctr', 'width': '20px'},
-            {'text': 'Name', 'width': '250px'},
+            {'text': 'Name', 'width': '170px'},
             {'text': 'Pts', 'width': '40px'},
             {'text': 'Buch', 'width': '40px'},
             {'text': 'Gams', 'width': '40px'}
@@ -161,6 +198,55 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
           }]
         };
         break;
+    }
+  };
+
+  // Replace with reading from the backend.
+  $scope.getPending = function(tournId) {
+    switch(tournId) {
+      case '3':
+        $scope.pending = [
+          {
+            'white': 'SportClubRecife',
+            'whiteFl': 'fl:br',
+            'black': 'juoni',
+            'blackFl': 'fl:--',
+            'date': '2015-10-10 15:00',
+            'time': '45 45',
+            'round': 2,
+            'bucket': 'Alekhine'            
+          },
+          {
+            'white': 'blkmagic',
+            'whiteFl': 'fl:ca',
+            'black': 'jcule',
+            'blackFl': 'fl:gb',
+            'date': 'now',
+            'time': '90 30',
+            'round': 2,
+            'bucket': 'Botvinnik'            
+          },
+          {
+            'white': 'allegroknight',
+            'whiteFl': 'fl:us',
+            'black': 'oldflyer',
+            'blackFl': 'fl:us',
+            'date': moment.utc().add(83, 'minute').format('L LT'),
+            'time': '45 45',
+            'round': 2,
+            'bucket': 'Alekhine'            
+          },
+          {
+            'white': 'Maras',
+            'whiteFl': 'fl:lt',
+            'black': 'xivarmy',
+            'blackFl': 'fl:ca',
+            'date': moment.utc().add(2, 'day').format('L LT'),
+            'time': '45 45',
+            'round': 2,
+            'bucket': 'Alekhine'
+          }
+        ];
     }
   };
 

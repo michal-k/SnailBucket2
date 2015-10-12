@@ -1,0 +1,28 @@
+<div ng-init="getPending(currTournId)">
+<h1>Pending games</h1>
+<table class="border margin">
+<tr class="border margin">
+  <th class="border margin">No</th>
+  <th class="border margin" width="150px">White</th>
+  <th class="border margin" width="120px">Date</th>
+  <th class="border margin" width="150px">Black</th>
+  <th class="border margin">Tm contr</th>
+  <th class="border margin">Rnd</th>
+  <th class="border margin">Bucket</th>
+</tr>
+<tr class="border margin" ng-repeat="game in pending">
+  <td class="border margin">{{$index + 1}}</td>
+  <td class="border margin"><img src="{{game.whiteFl|toFlag}}"/> {{game.white}}</td>
+  <td class="border margin center">
+    <div ng-class="getDateType(game.date)">
+      {{game.date}}
+      <div ng-show="getDateType(game.date)=='soon'">(in {{getRemaining(game.date)}})</div>
+    </div>
+  </td>
+  <td class="border margin"><img src="{{game.blackFl|toFlag}}"/> {{game.black}}</td>
+  <td class="border margin center">{{game.time}}</td>
+  <td class="border margin center">{{game.round}}</td>
+  <td class="border margin">{{game.bucket}}</td>
+</tr>
+</table>
+</div>
