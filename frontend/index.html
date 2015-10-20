@@ -19,7 +19,9 @@
 <tr>
   <!-- Left menu -->
   <td valign="top" style="width:150px; padding:20px;">
-    <a ui-sref="main"><img src="logo_small.png" alt="Snail Bucket logo"></img></a>
+    <a ui-sref="main">
+      <img src="logo_small.png" alt="Snail Bucket logo" width="150" height="150"></img>
+    </a>
     <h4>Ongoing tournaments:</h4>
     <div ng-repeat="tourn in tournaments">
       <span>{{tourn.name}}</span>
@@ -30,7 +32,7 @@
         <li><a ui-sref="pairings({tournId: tourn.id, round: round})">Round {{round}}</a></li>
       </ul>
       </li>
-      <li><a href="">Pending games</a></li>
+      <li><a ui-sref="pending({tournId: tourn.id})">Pending games</a></li>
       <li><a href="">Tournament guide</a></li>
       </ul>
     </div>

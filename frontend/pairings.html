@@ -4,14 +4,17 @@
 <h3>Bucket {{bucket.name}}</h3>
 <table class="border margin">
 <tr ng-repeat="game in bucket.games">
-  <td class="border" style="width: 200px">
-    <span style="width: 20px"><img src="images/flags/{{game.whCountry}}.png" alt="{{game.whCountry}}"></img></span>
-    {{game.white}}</td>
+  <td class="border" style="width: 170px">
+    <span style="width: 20px">
+      <img src="images/flags/{{game.whCountry}}.png" alt="{{game.whCountry}}"></img>
+    </span>
+    {{game.white}}
+ </td>
   <td class="border center" style="width: 130px">
     <div ng-show="{{game.result.length>0}}"><a href="#">{{game.result}}</a></div>
     <div ng-show="{{game.result.length==0 && game.date.length>0}}">{{game.date}}</div>
   </a></td>
-  <td class="border" style="width: 200px">
+  <td class="border" style="width: 170px">
     <span style="width: 20px">
       <img src="images/flags/{{game.blCountry}}.png" alt="{{game.blCountry}}"></img>
     </span>

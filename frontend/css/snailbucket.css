@@ -1,5 +1,5 @@
 .mainwidth {
-  width: 600px;
+  width: 800px;
 }
 
 .bottom-space {
@@ -7,7 +7,7 @@
 }
 
 td {
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .smallfont {
@@ -43,3 +43,19 @@ td.twodigits {
   width: 20px;
 }
   
+div.past {
+  color: red;
+}
+
+div.now {
+  color: green;
+  ifont-weight: bold;
+}
+
+div.soon {
+  color: black;
+}
+
+div.later {
+  color: black;
+}
