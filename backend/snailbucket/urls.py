@@ -24,9 +24,8 @@ urlpatterns = [
   url(r'^admin/', include(admin.site.urls)),
 ]
 
-# When running debug server, serve 'index.html' for '/'
-# TODO(crem): It doesn't actually work.
 if settings.DEBUG:
+  # When running debug server, serve 'index.html' for '/'
   urlpatterns += url(r'^$', 'django.contrib.staticfiles.views.serve',
                      {'path': 'index.html'}),
   urlpatterns += staticfiles_urlpatterns()
