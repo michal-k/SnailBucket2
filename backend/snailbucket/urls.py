@@ -17,6 +17,8 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.conf import settings
 from django.views.generic import RedirectView
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+import django.contrib.staticfiles.views
 
 urlpatterns = [
   url(r'^admin/', include(admin.site.urls)),
@@ -25,5 +27,6 @@ urlpatterns = [
 # When running debug server, serve 'index.html' for '/'
 # TODO(crem): It doesn't actually work.
 if settings.DEBUG:
-  urlpatterns += url(r'^$', RedirectView.as_view(
-    url='/index.html', permanent=False)),
+  urlpatterns += url(r'^$', 'django.contrib.staticfiles.views.serve',
+                     {'path': 'index.html'}),
+  urlpatterns += staticfiles_urlpatterns()
