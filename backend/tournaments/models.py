@@ -6,10 +6,10 @@ class Member(models.Model):
   user = models.OneToOneField(User, primary_key=True,
     help_text='Basic account information, username, password, email, etc.')
 
-  country = models.CharField(max_length=2, null=True,
+  country = models.CharField(max_length=2, null=True, blank=True,
     help_text='Two letter country code of the member. Lowercase.')
 
-  suspended_until = models.DateField(null=True,
+  suspended_until = models.DateField(null=True, blank=True,
     help_text='Until what date the user is suspended from games.')
 
   reliability = models.IntegerField(help_text='Reliability rating.')
@@ -83,7 +83,7 @@ class TournamentPlayer(models.Model):
 
   member = models.ForeignKey(Tournament)
 
-  fixed_rating = models.IntegerField(null=True, 
+  fixed_rating = models.IntegerField(null=True, blank=True,
     help_text='Fixed raiting. If NULL, it means that the bot haven\'t filled '
               'the rating yet')
 
@@ -93,23 +93,25 @@ class Game(models.Model):
 
   round = models.IntegerField(help_text='Which round is the game from.')
 
-  white_player = models.ForeignKey(Member, null=True, related_name='white_game',
+  white_player = models.ForeignKey(Member, null=True, blank=True,
+    related_name='white_game',
     help_text='Player who plays as white. Can be null in case of a bye.')
 
-  black_player = models.ForeignKey(Member, null=True, related_name='black_game',
+  black_player = models.ForeignKey(Member, null=True, blank=True,
+    related_name='black_game',
     help_text='Player who plays as black. Can be null in case of a bye.')
 
-  scheduled_time = models.DateTimeField(null=True,
+  scheduled_time = models.DateTimeField(null=True, blank=True,
     help_text='Scheduled date of a game.')
 
-  played_time = models.DateTimeField(null=True,
+  played_time = models.DateTimeField(null=True, blank=True,
     help_text='Time when then game was finished.')
 
   # TODO(crem) Enumerate possible game results.
   result = models.CharField(max_length=16,
     help_text='Game status/result.')
 
-  pgn = models.TextField(null=True, help_text='Game in PGN format.')
+  pgn = models.TextField(null=True, blank=True, help_text='Game in PGN format.')
 
 
 class GameForumMessage(models.Model):
@@ -117,12 +119,12 @@ class GameForumMessage(models.Model):
 
   time = models.DateTimeField(help_text='Time of a message')
 
-  member = models.ForeignKey(Member, null=True,
+  member = models.ForeignKey(Member, null=True, blank=True,
     help_text='Author of a forum message, or NULL for bot message.')
 
   text = models.TextField(help_text='Text of the message.')
 
-  game_time = models.DateTimeField(null=True,
+  game_time = models.DateTimeField(null=True, blank=True,
     help_text='Time of a game, if set in a message.')
 
   reset_game_time = models.BooleanField(default=False,
