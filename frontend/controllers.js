@@ -28,22 +28,29 @@ snailBucketApp.config(function($stateProvider, $urlRouterProvider) {
       url: '/archive',
       templateUrl: 'archive.html'
     })
+    .state('participants', {
+      url: '/t/:tournId/participants',
+      templateUrl: 'participants.html',
+      controller: function($scope, $stateParams) {
+        $scope.currTournId = $stateParams.tournId;
+      }
+    })
     .state('pending', {
-      url: '/:tournId/pending',
+      url: '/t/:tournId/pending',
       templateUrl: 'pending.html',
       controller: function($scope, $stateParams) {
         $scope.currTournId = $stateParams.tournId;
       }
     })
     .state('standings', {
-      url: '/:tournId/standings',
+      url: '/t/:tournId/standings',
       templateUrl: 'standings.html',
       controller: function($scope, $stateParams) {
         $scope.currTournId = $stateParams.tournId;
       }
     })
     .state('pairings', {
-      url: '/:tournId/pairings/:round',
+      url: '/t/:tournId/pairings/:round',
       templateUrl: 'pairings.html',
       controller: function($scope, $stateParams) {
         $scope.currTournId = $stateParams.tournId;
@@ -51,7 +58,7 @@ snailBucketApp.config(function($stateProvider, $urlRouterProvider) {
       }
     })
     .state('forum', {
-      url: '/:tournId/forum/:gameId',
+      url: '/t/:tournId/forum/:gameId',
       templateUrl: 'forum.html',
       controller: function($scope, $stateParams, $interval) {
         $scope.currTournId = $stateParams.tournId;
@@ -115,14 +122,93 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
     {
       'id': 3,
       'name': 'Snail Bucket Monthly 2015',
-      'rounds': ['1']
+      'rounds': ['1'],
+      'signup': false
     },
     {
       'id': 4,
       'name': 'Snail Bucket 4',
-      'rounds': []
-    },
+      'rounds': [],
+      'signup': true,
+      'signedup': [
+        {
+          'bucket': 'Alekhine',
+          'players': [
+            {
+             'name': 'Maras',
+             'flag': 'lt',
+             'rating': '2216',
+            },
+            {
+             'name': 'axeltiger',
+             'flag': 'se',
+             'rating': '2070',
+            },
+            {
+             'name': 'Oakwell',
+             'flag': 'gb',
+             'rating': '2061',
+            },
+            {
+             'name': 'KRMCHESS',
+             'flag': 'scotland',
+             'rating': '1986',
+            },
+            {
+             'name': 'pchesso',
+             'flag': 'de',
+             'rating': '1942',
+            },
+            {
+             'name': 'Relu',
+             'flag': '--',
+             'rating': '1899',
+            },
+            {
+             'name': 'juoni',
+             'flag': '--',
+             'rating': '1867',
+            },
+            {
+             'name': 'LightKnight',
+             'flag': 'it',
+             'rating': '1773',
+            }
+          ]
+        },
+        {
+          'bucket': 'Botvinnik',
+          'players': [
+            {
+             'name': 'Miltie',
+             'flag': 'us',
+             'rating': '1699',
+            },
+            {
+             'name': 'TwilightShifter',
+             'flag': 'ru',
+             'rating': 'not set',
+            },
+            {
+             'name': 'BethanyGrace',
+             'flag': 'us',
+             'rating': 'not set',
+            }
+          ]
+        }
+      ]
+    }
   ];
+
+  // Replace with reading from the backend.
+  $scope.getParticipants = function(tournId) {
+    for (var i = 0; i < $scope.tournaments.length; i++) {
+      if ($scope.tournaments[i].signup == true) {
+        $scope.currTour = $scope.tournaments[i];
+        return;
+      }
+    }
+  };
 
   // Replace with reading from the backend.
   $scope.getStandings = function(tournId) {
