@@ -26,13 +26,20 @@
     <div ng-repeat="tourn in tournaments">
       <span>{{tourn.name}}</span>
       <ul>
-      <li><a ui-sref="standings({tournId: tourn.id})">Standings</a></li>
+      <li ng-show="tourn.signup == true">
+        <a ui-sref="participants({tournId: tourn.id})">Participants</a>
+      </li>
+      <li ng-show="tourn.rounds.length > 0">
+        <a ui-sref="standings({tournId: tourn.id})">
+          Standings</a>
+      </li>
       <li ng-show="tourn.rounds.length > 0">Pairings:
       <ul ng-repeat="round in tourn.rounds">
         <li><a ui-sref="pairings({tournId: tourn.id, round: round})">Round {{round}}</a></li>
       </ul>
       </li>
-      <li><a ui-sref="pending({tournId: tourn.id})">Pending games</a></li>
+      <li ng-show="tourn.rounds.length > 0">
+        <a ui-sref="pending({tournId: tourn.id})">Pending games</a></li>
       <li><a href="">Tournament guide</a></li>
       </ul>
     </div>
