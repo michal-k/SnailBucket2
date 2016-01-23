@@ -1,5 +1,18 @@
-import re
+import django
+import os
+os.environ["DJANGO_SETTINGS_MODULE"] = "snailbucket.settings"
+django.setup()
+
 import telnetlib
+import re
+import sys
+
+import tournaments.models as db
+
+# Example call to db.
+# print(db.Member.objects.all().values())
+# sys.exit()
+
 
 host = 'www.freechess.org'
 
