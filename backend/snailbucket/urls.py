@@ -20,6 +20,8 @@ from django.views.generic import RedirectView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 import django.contrib.staticfiles.views
 
+admin.autodiscover()
+
 urlpatterns = [
   url(r'^admin/', include(admin.site.urls)),
 ]

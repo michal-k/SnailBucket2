@@ -7,18 +7,13 @@ import telnetlib
 import re
 import sys
 
+import pending
 import tournaments.models as db
-
-# Example call to db.
-# print(db.Member.objects.all().values())
-# sys.exit()
-
+import users
 
 host = 'www.freechess.org'
 
 users_not_to_answer = ['roboadmin']
-# TODO: read admins from DB.
-admins = ['pankracyrozumek']
 
 def bt(s):
 	return s.encode(encoding='UTF-8')
@@ -37,11 +32,8 @@ def init(conn):
 def tell(who, what):
 	conn.write(bt('tell {} {}\n'.format(who, what)))
 
-def is_admin(who):
-	for admin in admins:
-		if re.search(admin, who, flags=re.IGNORECASE):
-			return True
-	return False
+def qtell(who, what):
+	conn.write(bt('qtell {} {}\n'.format(who, what)))
 
 def observe(who, what):
 	m = re.search('observe ([^ ]*)', what)
@@ -54,7 +46,6 @@ def observe(who, what):
 	tell(who, 'Wrong syntax of observe command')
 		
 
-
 def handle_tell(who, what):
 	who = who.lstrip()
 	for user in users_not_to_answer:
@@ -66,8 +57,10 @@ def handle_tell(who, what):
 	if re.search('^play$', what, flags=re.IGNORECASE):
 		tell(who, 'Not implemented')
 		# TODO: call function starting the game here.
+	elif re.search('^ngames', what, flags=re.IGNORECASE):
+		qtell(who, 'Pending games:\n{}'.format(pending.get_pending_as_string()))
 	elif re.search('^observe', what, flags=re.IGNORECASE):
-		if is_admin(who):
+		if users.is_admin(who) or users.is_td(who):
 			# Ask the bot to observe particular game.
 			observe(who, what)
 		else:
