@@ -84,7 +84,7 @@ class TournamentPlayer(models.Model):
   """ Contains players before the split into buckets occurred. """
   tournament = models.ForeignKey(Tournament, related_name='players')
 
-  member = models.ForeignKey(Tournament)
+  member = models.ForeignKey(Member)
 
   fixed_rating = models.IntegerField(null=True, blank=True,
     help_text='Fixed raiting. If NULL, it means that the bot haven\'t filled '
