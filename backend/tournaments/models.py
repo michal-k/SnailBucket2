@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 
 
 class Member(models.Model):
+  def __str__(self):
+    return str(self.user)
+
   user = models.OneToOneField(User, primary_key=True,
     help_text='Basic account information, username, password, email, etc.')
 
