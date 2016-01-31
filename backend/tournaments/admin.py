@@ -14,11 +14,23 @@ class BucketPlayerAdmin(admin.ModelAdmin):
     return str(obj.bucket.name)
 
 
+class GameAdmin(admin.ModelAdmin):
+  list_display = ('bucket', 'round', 'white_player', 'black_player', 'result')
+  list_filter = (('bucket', admin.RelatedOnlyFieldListFilter),
+                 'round', 'white_player', 'black_player', 'result')
+
+
+class GameForumMessageAdmin(admin.ModelAdmin):
+  list_display = ('game', 'member', 'time')
+  list_filter = (('game', admin.RelatedOnlyFieldListFilter), 'member', 'time')
+
+
+
 admin.site.register(Member)
 admin.site.register(Tournament)
 admin.site.register(Round)
 admin.site.register(Bucket)
 admin.site.register(BucketPlayer, BucketPlayerAdmin)
 admin.site.register(TournamentPlayer, TournamentPlayerAdmin)
-admin.site.register(Game)
-admin.site.register(GameForumMessage)
+admin.site.register(Game, GameAdmin)
+admin.site.register(GameForumMessage, GameForumMessageAdmin)

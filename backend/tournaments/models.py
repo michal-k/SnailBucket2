@@ -6,6 +6,9 @@ class Member(models.Model):
   def __str__(self):
     return str(self.user)
 
+  def name(self):
+    return self.user.username
+
   user = models.OneToOneField(User, primary_key=True,
     help_text='Basic account information, username, password, email, etc.')
 
@@ -98,6 +101,11 @@ class TournamentPlayer(models.Model):
 
 
 class Game(models.Model):
+  def __str__(self):
+    return "%s, R%d, %s vs %s (%s)" % (
+      self.bucket, self.round,
+      self.white_player, self.black_player, self.result)
+
   bucket = models.ForeignKey(Bucket)
 
   round = models.IntegerField(help_text='Which round is the game from.')
@@ -124,6 +132,9 @@ class Game(models.Model):
 
 
 class GameForumMessage(models.Model):
+  def __str__(self):
+    return 'Message from %s, %s, %s' % (self.member, self.time, self.game)
+
   game = models.ForeignKey(Game)
 
   time = models.DateTimeField(help_text='Time of a message')
