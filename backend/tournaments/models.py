@@ -24,7 +24,7 @@ class Member(models.Model):
     '24-character string of format "yyyyyrrrrwwwwwwwwyyyyyyy", UTC-based.')
 
   preferred_control = models.CharField(default='45 45', max_length=100,
-    help_text='Comma separated list of ‘MM SS’ time controls.')
+    help_text='Comma separated list of "MM SS" time controls.')
 
   # TODO(crem): Do we need `status` here?
 
