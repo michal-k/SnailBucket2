@@ -19,11 +19,13 @@ from django.conf import settings
 from django.views.generic import RedirectView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 import django.contrib.staticfiles.views
+import tournaments.urls
 
 admin.autodiscover()
 
 urlpatterns = [
   url(r'^admin/', include(admin.site.urls)),
+  url(r'^data/', include(tournaments.urls)),
 ]
 
 if settings.DEBUG:

@@ -3,6 +3,12 @@ from django.contrib.auth.models import User
 
 
 class Member(models.Model):
+  def __str__(self):
+    return str(self.user)
+
+  def name(self):
+    return self.user.username
+
   user = models.OneToOneField(User, primary_key=True,
     help_text='Basic account information, username, password, email, etc.')
 
@@ -24,6 +30,9 @@ class Member(models.Model):
 
 
 class Tournament(models.Model):
+  def __str__(self):
+    return "%s (%s)" % (str(self.name), str(self.short_name))
+
   short_name = models.SlugField(max_length=32,
     help_text='E.g. monthly15, sb4, etc.')
 
@@ -61,6 +70,9 @@ class Round(models.Model):
 
 
 class Bucket(models.Model):
+  def __str__(self):
+    return "%s -- %s" % (str(self.tournament.name), str(self.name))
+
   tournament = models.ForeignKey(Tournament)
 
   name = models.CharField(max_length=64, help_text='Name of the bucket.')
@@ -81,7 +93,7 @@ class TournamentPlayer(models.Model):
   """ Contains players before the split into buckets occurred. """
   tournament = models.ForeignKey(Tournament, related_name='players')
 
-  member = models.ForeignKey(Tournament)
+  member = models.ForeignKey(Member)
 
   fixed_rating = models.IntegerField(null=True, blank=True,
     help_text='Fixed raiting. If NULL, it means that the bot haven\'t filled '
@@ -89,6 +101,11 @@ class TournamentPlayer(models.Model):
 
 
 class Game(models.Model):
+  def __str__(self):
+    return "%s, R%d, %s vs %s (%s)" % (
+      self.bucket, self.round,
+      self.white_player, self.black_player, self.result)
+
   bucket = models.ForeignKey(Bucket)
 
   round = models.IntegerField(help_text='Which round is the game from.')
@@ -115,6 +132,9 @@ class Game(models.Model):
 
 
 class GameForumMessage(models.Model):
+  def __str__(self):
+    return 'Message from %s, %s, %s' % (self.member, self.time, self.game)
+
   game = models.ForeignKey(Game)
 
   time = models.DateTimeField(help_text='Time of a message')
