@@ -28,6 +28,6 @@ urlpatterns = [
 
 if settings.DEBUG:
   # When running debug server, serve 'index.html' for '/'
-  urlpatterns += url(r'^$', 'django.contrib.staticfiles.views.serve',
+  urlpatterns += url(r'^$', django.contrib.staticfiles.views.serve,
                      {'path': 'index.html'}),
   urlpatterns += staticfiles_urlpatterns()
