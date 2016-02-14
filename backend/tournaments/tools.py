@@ -86,21 +86,21 @@ def get_tournament_buckets(tournament):
 
 def add_forum_message(game, member, text='',
                       month=0, day=0, hour=0, minute=0, reset=False):
-"""Adds forum message.
+  """Adds forum message.
 
-Arguments:
-  game -- game object.
-  member -- member object.
-  text -- text to add.
-  month, day, hour, minute -- if not zero, add that as game time.
-  reset -- reset game time.
+  Arguments:
+    game -- game object.
+    member -- member object.
+    text -- text to add.
+    month, day, hour, minute -- if not zero, add that as game time.
+    reset -- reset game time.
 
-Return:
-  None
+  Return:
+    None
 
-Throws:
-  PermissionDenied -- if user doesn't have permission to add message.
-"""
+  Throws:
+    PermissionDenied -- if user doesn't have permission to add message.
+  """
   # User must be one of players or one of TDs for that bucket.
   if (member != game.white_player and
       member != game.black_player and
