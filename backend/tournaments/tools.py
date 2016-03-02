@@ -72,35 +72,66 @@ def get_tournament_buckets(tournament):
 
   Return:
     List of dictionaries [{'name': <tournament name>,
-                           'members': [<username>, ...]}, ...]
+                           'members': [{
+													    'name': <player name>,
+															'flag': <player country code>,
+															'rating': <fixed rating>
+															}, ...]}, ...]
 
   Throws:
     NotFound -- if tournament is not found.
   """
+  ratings = {}
+  for player in get_tournament(tournament).players.all():
+    ratings[player.member.name()] = player.fixed_rating
   buckets = get_tournament(tournament).bucket_set.all()
   return [
       { 'name': b.name,
-        'members': [ m.member.name() for m in b.players.all() ] }
+        'members': [ 
+	    { 'name': m.member.name(),
+	      'flag': m.member.country,
+	      'rating': ratings[m.member.name()] }
+	    for m in b.players.all() ] }
       for b in buckets ]
+
+def get_tournament_participants(tournament):
+  """Return the list of participants for a given tournament.
+
+  Arguments:
+    tournament -- short_name of a tournament.
+
+  Return:
+    List of dictionaries [{'name': <player_name>,
+			   'flag': <country_code>,
+			   'rating': <player_rating>}, ...]
+
+  Throws:
+    NotFound -- if tournamnet is not found.
+  """
+  return [ 
+      { 'name': player.member.name(),
+        'rating': player.fixed_rating,
+        'flag': player.member.country }
+	  for player in get_tournament(tournament).players.all()]
 
 
 def add_forum_message(game, member, text='',
                       month=0, day=0, hour=0, minute=0, reset=False):
-"""Adds forum message.
+  """Adds forum message.
 
-Arguments:
-  game -- game object.
-  member -- member object.
-  text -- text to add.
-  month, day, hour, minute -- if not zero, add that as game time.
-  reset -- reset game time.
+  Arguments:
+    game -- game object.
+    member -- member object.
+    text -- text to add.
+    month, day, hour, minute -- if not zero, add that as game time.
+    reset -- reset game time.
 
-Return:
-  None
+  Return:
+    None
 
-Throws:
-  PermissionDenied -- if user doesn't have permission to add message.
-"""
+  Throws:
+    PermissionDenied -- if user doesn't have permission to add message.
+  """
   # User must be one of players or one of TDs for that bucket.
   if (member != game.white_player and
       member != game.black_player and
