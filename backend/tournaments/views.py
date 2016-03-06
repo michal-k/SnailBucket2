@@ -6,11 +6,17 @@ import json
 
 def get_participants(request, tournament):
   try:
-    res = tools.get_tournament_buckets(tournament)
+    res = tools.get_tournament_participants(tournament)
   except tools.NotFound:
     raise Http404
   return HttpResponse(json.dumps(res))
 
+def get_buckets(request, tournament):
+  try:
+    res = tools.get_tournament_buckets(tournament)
+  except tools.NotFound:
+    raise Http404
+  return HttpResponse(json.dumps(res))
 
 def add_forum_message(request, game_id):
   try:
