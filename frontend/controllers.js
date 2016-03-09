@@ -121,7 +121,7 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope, $http) {
   // Replace with reading from the backend.
   $scope.tournaments = [
     {
-      'id': 3,
+      'id': 'foo',
       'name': 'Snail Bucket Monthly 2015',
       'rounds': ['1'],
       'signup': false
@@ -130,64 +130,7 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope, $http) {
       'id': 'frf',
       'name': 'Snail Bucket 4',
       'rounds': [],
-      'signup': true,
-      'signedup': [
-        {
-         'name': 'Maras',
-         'flag': 'lt',
-         'rating': '2216',
-        },
-        {
-         'name': 'axeltiger',
-         'flag': 'se',
-         'rating': '2070',
-        },
-        {
-         'name': 'Oakwell',
-         'flag': 'gb',
-         'rating': '2061',
-        },
-        {
-         'name': 'KRMCHESS',
-         'flag': 'scotland',
-         'rating': '1986',
-        },
-        {
-         'name': 'pchesso',
-         'flag': 'de',
-         'rating': '1942',
-        },
-        {
-         'name': 'Relu',
-         'flag': '--',
-         'rating': '1899',
-        },
-        {
-         'name': 'juoni',
-         'flag': '--',
-         'rating': '1867',
-        },
-        {
-         'name': 'LightKnight',
-         'flag': 'it',
-         'rating': '1773',
-        },
-        {
-         'name': 'Miltie',
-         'flag': 'us',
-         'rating': '1699',
-        },
-        {
-         'name': 'TwilightShifter',
-         'flag': 'ru',
-         'rating': 'not set',
-        },
-        {
-         'name': 'BethanyGrace',
-         'flag': 'us',
-         'rating': 'not set',
-        }
-      ]
+      'signup': true
     }
   ];
 
