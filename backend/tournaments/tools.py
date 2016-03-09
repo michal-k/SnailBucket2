@@ -74,7 +74,7 @@ def get_tournament_buckets(tournament):
     List of dictionaries [{'name': <tournament name>,
                            'members': [{
                               'name': <player name>,
-                              'flag': <player country code>,
+                              'country': <player country code>,
                               'rating': <fixed rating>
                               }, ...]}, ...]
 
@@ -89,7 +89,7 @@ def get_tournament_buckets(tournament):
       { 'name': b.name,
         'members': [ 
       { 'name': m.member.name(),
-        'flag': m.member.country,
+        'country': m.member.country,
         'rating': ratings[m.member.name()] }
       for m in b.players.all() ] }
       for b in buckets ]
@@ -102,7 +102,7 @@ def get_tournament_participants(tournament):
 
   Return:
     List of dictionaries [{'name': <player_name>,
-         'flag': <country_code>,
+         'country': <country_code>,
          'rating': <player_rating>}, ...]
 
   Throws:
@@ -111,7 +111,7 @@ def get_tournament_participants(tournament):
   return [ 
       { 'name': player.member.name(),
         'rating': player.fixed_rating,
-        'flag': player.member.country }
+        'country': player.member.country }
     for player in get_tournament(tournament).players.all()]
 
 

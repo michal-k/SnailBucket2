@@ -2,7 +2,7 @@
 <h4>Participants</h4>
 <table>
   <tr ng-repeat="player in participants">
-    <td width="170px"><img src="{{player.flag|toFlag}}"/> {{player.name}}</td>
+    <td width="170px"><img src="{{player.country|toFlag}}"/> {{player.name}}</td>
     <td width="40px">{{player.rating}}</td>
   </tr>
 </table>
