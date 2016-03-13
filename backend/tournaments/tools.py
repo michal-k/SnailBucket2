@@ -14,10 +14,8 @@ def get_tournament(tournament):
 
   Arguments:
     tournament -- short name of tournament.
-
   Return:
     models.Tournament object instance.
-
   Throws:
     NotFound -- if tournament is not found.
   """
@@ -32,7 +30,6 @@ def get_game(game_id):
 
   Arguments:
     game_id -- numeric id of a game.
-
   Throws:
     NotFound -- if game is not found.
   """
@@ -47,7 +44,6 @@ def get_member(user):
 
   Arguments:
     user -- user model object.
-
   Throws:
     NotFound -- if user doesn't have corresponding user.
   """
@@ -69,7 +65,6 @@ def get_tournament_buckets(tournament):
 
   Arguments:
     tournament -- short_name of a tournament.
-
   Return:
     List of dictionaries [{'name': <tournament name>,
                            'members': [{
@@ -77,7 +72,6 @@ def get_tournament_buckets(tournament):
                               'country': <player country code>,
                               'rating': <fixed rating>
                               }, ...]}, ...]
-
   Throws:
     NotFound -- if tournament is not found.
   """
@@ -99,12 +93,10 @@ def get_tournament_participants(tournament):
 
   Arguments:
     tournament -- short_name of a tournament.
-
   Return:
     List of dictionaries [{'name': <player_name>,
          'country': <country_code>,
          'rating': <player_rating>}, ...]
-
   Throws:
     NotFound -- if tournamnet is not found.
   """
@@ -125,10 +117,8 @@ def add_forum_message(game, member, text='',
     text -- text to add.
     month, day, hour, minute -- if not zero, add that as game time.
     reset -- reset game time.
-
   Return:
     None
-
   Throws:
     PermissionDenied -- if user doesn't have permission to add message.
   """
