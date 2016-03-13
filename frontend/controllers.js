@@ -32,7 +32,8 @@ snailBucketApp.config(function($stateProvider, $urlRouterProvider) {
       url: '/t/:tournId/participants',
       templateUrl: 'participants.html',
       controller: function($scope, $stateParams) {
-        $scope.currTournId = $stateParams.tournId;
+        $scope.getParticipants($stateParams.tournId);
+        $scope.setCurrTourn($stateParams.tournId);
       }
     })
     .state('pending', {
@@ -86,7 +87,7 @@ snailBucketApp.filter('toFlag', function() {
   }
 });
 
-snailBucketApp.controller('TournamentsCtrl', function ($scope) {
+snailBucketApp.controller('TournamentsCtrl', function ($scope, $http) {
 
   $scope.getDateType = function(dateString) {
     if (dateString == 'now') {
@@ -120,94 +121,35 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
   // Replace with reading from the backend.
   $scope.tournaments = [
     {
-      'id': 3,
+      'id': 'foo',
       'name': 'Snail Bucket Monthly 2015',
       'rounds': ['1'],
       'signup': false
     },
     {
-      'id': 4,
+      'id': 'frf',
       'name': 'Snail Bucket 4',
       'rounds': [],
-      'signup': true,
-      'signedup': [
-        {
-          'bucket': 'Alekhine',
-          'players': [
-            {
-             'name': 'Maras',
-             'flag': 'lt',
-             'rating': '2216',
-            },
-            {
-             'name': 'axeltiger',
-             'flag': 'se',
-             'rating': '2070',
-            },
-            {
-             'name': 'Oakwell',
-             'flag': 'gb',
-             'rating': '2061',
-            },
-            {
-             'name': 'KRMCHESS',
-             'flag': 'scotland',
-             'rating': '1986',
-            },
-            {
-             'name': 'pchesso',
-             'flag': 'de',
-             'rating': '1942',
-            },
-            {
-             'name': 'Relu',
-             'flag': '--',
-             'rating': '1899',
-            },
-            {
-             'name': 'juoni',
-             'flag': '--',
-             'rating': '1867',
-            },
-            {
-             'name': 'LightKnight',
-             'flag': 'it',
-             'rating': '1773',
-            }
-          ]
-        },
-        {
-          'bucket': 'Botvinnik',
-          'players': [
-            {
-             'name': 'Miltie',
-             'flag': 'us',
-             'rating': '1699',
-            },
-            {
-             'name': 'TwilightShifter',
-             'flag': 'ru',
-             'rating': 'not set',
-            },
-            {
-             'name': 'BethanyGrace',
-             'flag': 'us',
-             'rating': 'not set',
-            }
-          ]
-        }
-      ]
+      'signup': true
     }
   ];
 
-  // Replace with reading from the backend.
-  $scope.getParticipants = function(tournId) {
-    for (var i = 0; i < $scope.tournaments.length; i++) {
-      if ($scope.tournaments[i].signup == true) {
-        $scope.currTour = $scope.tournaments[i];
+  $scope.setCurrTourn = function(currTournId) {
+    for (i = 0; i < $scope.tournaments.length; i++) {
+      if ($scope.tournaments[i].id = currTournId) {
+        $scope.currTourn = $scope.tournaments[i];
         return;
       }
     }
+  };
+
+  // Replace with reading from the backend.
+  $scope.getParticipants = function(tournId) {
+    $scope.participants = []
+    $http.get('/data/participants/' + tournId).then(
+        function successCallback(response) {
+          $scope.participants = response.data
+        });
   };
 
   // Replace with reading from the backend.
@@ -248,9 +190,9 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope) {
           }]
         };
         break;
-      case '4':
+      case 'frf':
         $scope.standing = {
-          'tournId': 4,
+          'tournId': 'frf',
           'name': 'Snail Bucket 4',
           'headers': [
             {'text': 'No', 'width': '30px'},

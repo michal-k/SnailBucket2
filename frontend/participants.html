@@ -1,12 +1,9 @@
-<div ng-init="getParticipants(currTournId)">
-<h1>{{currTour.name}}</h1>
-<div ng-repeat="bucket in currTour.signedup">
-<h3>Bucket {{bucket.bucket}}</h3>
+<h1>{{currTourn.name}}</h1>
+<h4>Participants</h4>
 <table>
-  <tr ng-repeat="player in bucket.players">
-    <td width="170px"><img src="{{player.flag|toFlag}}"/> {{player.name}}</td>
+  <tr ng-repeat="player in participants">
+    <td width="170px"><img src="{{player.country|toFlag}}"/> {{player.name}}</td>
     <td width="40px">{{player.rating}}</td>
   </tr>
 </table>
-</div>
 </div>

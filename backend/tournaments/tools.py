@@ -72,16 +72,47 @@ def get_tournament_buckets(tournament):
 
   Return:
     List of dictionaries [{'name': <tournament name>,
-                           'members': [<username>, ...]}, ...]
+                           'members': [{
+                              'name': <player name>,
+                              'country': <player country code>,
+                              'rating': <fixed rating>
+                              }, ...]}, ...]
 
   Throws:
     NotFound -- if tournament is not found.
   """
+  ratings = {}
+  for player in get_tournament(tournament).players.all():
+    ratings[player.member.name()] = player.fixed_rating
   buckets = get_tournament(tournament).bucket_set.all()
   return [
       { 'name': b.name,
-        'members': [ m.member.name() for m in b.players.all() ] }
+        'members': [ 
+      { 'name': m.member.name(),
+        'country': m.member.country,
+        'rating': ratings[m.member.name()] }
+      for m in b.players.all() ] }
       for b in buckets ]
+
+def get_tournament_participants(tournament):
+  """Return the list of participants for a given tournament.
+
+  Arguments:
+    tournament -- short_name of a tournament.
+
+  Return:
+    List of dictionaries [{'name': <player_name>,
+         'country': <country_code>,
+         'rating': <player_rating>}, ...]
+
+  Throws:
+    NotFound -- if tournamnet is not found.
+  """
+  return [ 
+      { 'name': player.member.name(),
+        'rating': player.fixed_rating,
+        'country': player.member.country }
+    for player in get_tournament(tournament).players.all()]
 
 
 def add_forum_message(game, member, text='',
