@@ -143,4 +143,64 @@ def add_forum_message(game, member, text='',
   message.save()
 
 
+def get_tournaments(only_active=False):
+  """Returns the list of tournaments, except for future ones
+  (ones which have signup date in future)
+
+  Arguments:
+    only_active -- only return of actual tournaments if this is set.
+                   Actual tournaments are ones for which last round started
+                   not earliear than 30 days ago
+                     TODO(crem) Change that to round end day, not start day.
+                   If there is no active tournaments, the tournament which
+                   was finished last is returned.
+  Return:
+    List of tournaments [{'id': <short name of a tournament>,
+                          'name': <readable name of a tournament>,
+                          'rounds': <total number of rounds>,
+                          'started_rounds': <number of started rounds>,
+                          'signup': <are sign ups are currently allowed>}]
+  """
+  now = datetime.datetime.now()
+  tournaments = models.Tournament.all()
+  tournaments_json = []
+
+  for t in tournaments:
+    if t.signup_start >= now:
+      continue  # Signup not yet started.
+    if len(t.round_set().count()) == 0:
+      continue  # No rounds in tournament, weird.
+
+    rounds = t.round_set().order_by('-start')
+    j = {'id': t.short_name,
+         'name': t.name,
+         'signup': t.signup_end < now,
+         'end_date': rounds[0].start(),
+         'rounds': len(rounds),
+         'started_rounds': len([r for r in rounds if r.start <= now])}
+    tournaments_json.append(j)
+
+  if not only_active or not tournaments_json:
+    return tournaments_json
+
+  res = [t for t in tournaments_json
+         if now - t['end_date'] < datetime.timedelta(days=30)]
+
+  if not res:
+    # no active tournaments, returning last one.
+    res = sorted(tournaments_json, key = lambda t: t['end_date'],
+                 reverse=True)[0]
+
+  return res
+
+
+
+
+
+
+
+
+
+
+
   
