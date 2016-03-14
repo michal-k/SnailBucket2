@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.core.exceptions import PermissionDenied
 import json
 
+
 def get_participants(request, tournament):
   try:
     res = tools.get_tournament_participants(tournament)
@@ -11,12 +12,14 @@ def get_participants(request, tournament):
     raise Http404
   return HttpResponse(json.dumps(res))
 
+
 def get_buckets(request, tournament):
   try:
     res = tools.get_tournament_buckets(tournament)
   except tools.NotFound:
     raise Http404
   return HttpResponse(json.dumps(res))
+
 
 def add_forum_message(request, game_id):
   try:
@@ -45,3 +48,7 @@ def add_forum_message(request, game_id):
   except tools.PermissionDenied:
     return HttpResponse(status=500)
 
+
+def get_tournaments(request):
+  res = tools.get_tournaments(only_active = True)
+  return HttpResponse(json.dumps(res))
