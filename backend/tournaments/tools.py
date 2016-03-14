@@ -161,36 +161,36 @@ def get_tournaments(only_active=False):
                           'started_rounds': <number of started rounds>,
                           'signup': <are sign ups are currently allowed>}]
   """
-  now = datetime.datetime.now()
-  tournaments = models.Tournament.all()
+  now = datetime.datetime.now(datetime.timezone.utc)
+  tournaments = models.Tournament.objects.all()
   tournaments_json = []
 
   for t in tournaments:
     if t.signup_start >= now:
       continue  # Signup not yet started.
-    if len(t.round_set().count()) == 0:
+    if t.round_set.count() == 0:
       continue  # No rounds in tournament, weird.
 
-    rounds = t.round_set().order_by('-start')
+    rounds = t.round_set.order_by('-start')
     j = {'id': t.short_name,
          'name': t.name,
-         'signup': t.signup_end < now,
-         'end_date': rounds[0].start(),
+         'signup': now < t.signup_end,
+         'end_date': rounds[0].start,
          'rounds': len(rounds),
          'started_rounds': len([r for r in rounds if r.start <= now])}
     tournaments_json.append(j)
 
   if not only_active or not tournaments_json:
-    return tournaments_json
-
-  res = [t for t in tournaments_json
-         if now - t['end_date'] < datetime.timedelta(days=30)]
-
-  if not res:
-    # no active tournaments, returning last one.
-    res = sorted(tournaments_json, key = lambda t: t['end_date'],
-                 reverse=True)[0]
-
+    res = tournaments_json
+  else:
+    res = [t for t in tournaments_json
+           if now - t['end_date'] < datetime.timedelta(days=30)]
+    if not res:
+      # no active tournaments, returning last one.
+      res = sorted(tournaments_json, key = lambda t: t['end_date'],
+                   reverse=True)[0]
+  for t in res:
+    del t['end_date']
   return res
 
 
