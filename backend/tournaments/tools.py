@@ -148,9 +148,9 @@ def get_tournaments(only_active=False):
   (ones which have signup date in future)
 
   Arguments:
-    only_active -- only return of actual tournaments if this is set.
-                   Actual tournaments are ones for which last round started
-                   not earliear than 30 days ago
+    only_active -- only return active tournaments.
+                   Active tournaments are ones for which last round started
+                   not earlier than 30 days ago
                      TODO(crem) Change that to round end day, not start day.
                    If there is no active tournaments, the tournament which
                    was finished last is returned.
@@ -159,7 +159,7 @@ def get_tournaments(only_active=False):
                           'name': <readable name of a tournament>,
                           'rounds': <total number of rounds>,
                           'started_rounds': <number of started rounds>,
-                          'signup': <are sign ups are currently allowed>}]
+                          'signup': <are sign ups currently allowed>}]
   """
   now = datetime.datetime.now(datetime.timezone.utc)
   tournaments = models.Tournament.objects.all()
