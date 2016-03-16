@@ -193,15 +193,3 @@ def get_tournaments(only_active=False):
   for t in res:
     del t['end_date']
   return res
-
-
-
-
-
-
-
-
-
-
-
-  
