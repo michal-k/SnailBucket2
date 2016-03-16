@@ -171,11 +171,12 @@ def get_tournaments(only_active=False):
     if t.round_set.count() == 0:
       continue  # No rounds in tournament, weird.
 
+    # Sort rounds in reverse order by start date.
     rounds = t.round_set.order_by('-start')
     j = {'id': t.short_name,
          'name': t.name,
          'signup': now < t.signup_end,
-         'end_date': rounds[0].start,
+         'end_date': rounds[0].start,  # Start date of a last round.
          'rounds': len(rounds),
          'started_rounds': len([r for r in rounds if r.start <= now])}
     tournaments_json.append(j)
