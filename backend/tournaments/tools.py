@@ -14,10 +14,8 @@ def get_tournament(tournament):
 
   Arguments:
     tournament -- short name of tournament.
-
   Return:
     models.Tournament object instance.
-
   Throws:
     NotFound -- if tournament is not found.
   """
@@ -32,7 +30,6 @@ def get_game(game_id):
 
   Arguments:
     game_id -- numeric id of a game.
-
   Throws:
     NotFound -- if game is not found.
   """
@@ -47,7 +44,6 @@ def get_member(user):
 
   Arguments:
     user -- user model object.
-
   Throws:
     NotFound -- if user doesn't have corresponding user.
   """
@@ -69,7 +65,6 @@ def get_tournament_buckets(tournament):
 
   Arguments:
     tournament -- short_name of a tournament.
-
   Return:
     List of dictionaries [{'name': <tournament name>,
                            'members': [{
@@ -77,7 +72,6 @@ def get_tournament_buckets(tournament):
                               'country': <player country code>,
                               'rating': <fixed rating>
                               }, ...]}, ...]
-
   Throws:
     NotFound -- if tournament is not found.
   """
@@ -99,12 +93,10 @@ def get_tournament_participants(tournament):
 
   Arguments:
     tournament -- short_name of a tournament.
-
   Return:
     List of dictionaries [{'name': <player_name>,
          'country': <country_code>,
          'rating': <player_rating>}, ...]
-
   Throws:
     NotFound -- if tournamnet is not found.
   """
@@ -125,10 +117,8 @@ def add_forum_message(game, member, text='',
     text -- text to add.
     month, day, hour, minute -- if not zero, add that as game time.
     reset -- reset game time.
-
   Return:
     None
-
   Throws:
     PermissionDenied -- if user doesn't have permission to add message.
   """
@@ -153,4 +143,53 @@ def add_forum_message(game, member, text='',
   message.save()
 
 
-  
+def get_tournaments(only_active=False):
+  """Returns the list of tournaments, except for future ones
+  (ones which have signup date in future)
+
+  Arguments:
+    only_active -- only return active tournaments.
+                   Active tournaments are ones for which last round started
+                   not earlier than 30 days ago
+                     TODO(crem) Change that to round end day, not start day.
+                   If there is no active tournaments, the tournament which
+                   was finished last is returned.
+  Return:
+    List of tournaments [{'id': <short name of a tournament>,
+                          'name': <readable name of a tournament>,
+                          'rounds': <total number of rounds>,
+                          'started_rounds': <number of started rounds>,
+                          'signup': <are sign ups currently allowed>}]
+  """
+  now = datetime.datetime.now(datetime.timezone.utc)
+  tournaments = models.Tournament.objects.all()
+  tournaments_json = []
+
+  for t in tournaments:
+    if t.signup_start >= now:
+      continue  # Signup not yet started.
+    if t.round_set.count() == 0:
+      continue  # No rounds in tournament, weird.
+
+    # Sort rounds in reverse order by start date.
+    rounds = t.round_set.order_by('-start')
+    j = {'id': t.short_name,
+         'name': t.name,
+         'signup': now < t.signup_end,
+         'end_date': rounds[0].start,  # Start date of a last round.
+         'rounds': len(rounds),
+         'started_rounds': len([r for r in rounds if r.start <= now])}
+    tournaments_json.append(j)
+
+  if not only_active or not tournaments_json:
+    res = tournaments_json
+  else:
+    res = [t for t in tournaments_json
+           if now - t['end_date'] < datetime.timedelta(days=30)]
+    if not res:
+      # no active tournaments, returning last one.
+      res = sorted(tournaments_json, key = lambda t: t['end_date'],
+                   reverse=True)[0]
+  for t in res:
+    del t['end_date']
+  return res

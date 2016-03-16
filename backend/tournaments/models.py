@@ -47,6 +47,9 @@ class Tournament(models.Model):
   signup_end = models.DateTimeField(
     help_text='When registration is no longer open.')
 
+  # games_start, rounds_count and rounds_start_cron are only used to generate
+  # 'Round' model, and after that should not be used.
+  # TODO(crem): Remove those fields from the model?
   games_start = models.DateTimeField(
     help_text='Round 1 won\'t start before that time')
 
