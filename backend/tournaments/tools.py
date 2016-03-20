@@ -1,4 +1,5 @@
 from . import models
+from croniter import croniter
 import datetime
 
 class NotFound(Exception):
@@ -195,3 +196,22 @@ def get_tournaments(only_active=False):
     del t['active']
     t.pop('end_date', None)
   return res
+
+
+def generate_tournament_rounds(pk):
+  """Generates round schedule for a tournament based on the settings.
+
+  Old schedule will be removed if it exists.
+  """
+  tournament = models.Tournament.objects.get(id=pk)
+  base = tournament.roundsgen_games_start
+  cron_expr = tournament.roundsgen_rounds_start_cron
+  round_count = tournament.roundsgen_rounds_count
+  itr = croniter(cron_expr, base)
+  rounds = [itr.get_next(datetime.datetime) for i in range(round_count)]
+  # Delete existing rounds if they exist.
+  models.Round.objects.filter(tournament=tournament).delete()
+  # Add generated rounds.
+  for r in rounds:
+    round = models.Round.objects.create(tournament=tournament, start = r)
+    round.save()

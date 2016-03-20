@@ -1,6 +1,9 @@
+from django.conf.urls import url
 from django.contrib import admin
+from django.shortcuts import redirect
 
 from .models import *
+from .tools import generate_tournament_rounds
 
 class TournamentPlayerAdmin(admin.ModelAdmin):
   list_display = ('member', 'tournament_name', 'bucket_name')
@@ -20,6 +23,7 @@ class RoundInline(admin.TabularInline):
     model = Round
     extra = 0
 
+
 class TournamentAdmin(admin.ModelAdmin):
   list_display = ('name', 'short_name', 'signup_start', 'signup_end', 'rounds',
                   'is_active', 'games_left', 'last_played_game_date')
@@ -27,6 +31,15 @@ class TournamentAdmin(admin.ModelAdmin):
   inlines = [RoundInline, ]
   def rounds(self, obj):
     return str(obj.round_set.count())
+
+  def get_urls(self):
+    urls = super(TournamentAdmin, self).get_urls()
+    my_urls = [url(r'^(?P<pk>\d+)/gen_rounds/$', self.generate_rounds), ]
+    return my_urls + urls
+
+  def generate_rounds(self, request, pk):
+    generate_tournament_rounds(int(pk))
+    return redirect('../change/')
 
 
 class GameAdmin(admin.ModelAdmin):
