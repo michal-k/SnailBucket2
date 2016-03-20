@@ -20,7 +20,7 @@ class Member(models.Model):
   suspended_until = models.DateField(null=True, blank=True,
     help_text='Until what date the user is suspended from games.')
 
-  reliability = models.IntegerField(default=4,
+  reliability = models.IntegerField(default=2,
                                     help_text='Reliability rating.')
 
   preferred_hours = models.CharField(max_length=24, default='y' * 24, help_text=
