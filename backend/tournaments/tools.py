@@ -1,4 +1,5 @@
 from . import models
+from croniter import croniter
 import datetime
 
 class NotFound(Exception):
@@ -148,10 +149,11 @@ def get_tournaments(only_active=False):
   (ones which have signup date in future)
 
   Arguments:
-    only_active -- only return active tournaments.
-                   Active tournaments are ones for which last round started
-                   not earlier than 30 days ago
-                     TODO(crem) Change that to round end day, not start day.
+    only_active -- only return active tournaments. Active tournaments are:
+                   * With signup started but not finished
+                   * Last game played < 30 days ago
+                   * There are unplayed games
+                   * There are rounds which start in a future
                    If there is no active tournaments, the tournament which
                    was finished last is returned.
   Return:
@@ -163,33 +165,53 @@ def get_tournaments(only_active=False):
   """
   now = datetime.datetime.now(datetime.timezone.utc)
   tournaments = models.Tournament.objects.all()
-  tournaments_json = []
+  res = []
+
+  was_active_game = False
 
   for t in tournaments:
     if t.signup_start >= now:
-      continue  # Signup not yet started.
-    if t.round_set.count() == 0:
-      continue  # No rounds in tournament, weird.
-
-    # Sort rounds in reverse order by start date.
+      continue  # Signup not yet started.    
     rounds = t.round_set.order_by('-start')
-    j = {'id': t.short_name,
+    j = {'active': t.is_active(),
+         'id': t.short_name,
          'name': t.name,
          'signup': now < t.signup_end,
-         'end_date': rounds[0].start,  # Start date of a last round.
          'rounds': len(rounds),
          'started_rounds': len([r for r in rounds if r.start <= now])}
-    tournaments_json.append(j)
+    if not j['active']:
+      j['last_game'] = t.last_played_game_date()
+      if j['last_game'] and now - j['last_game'] < datetime.timedelta(days=30):
+        # Recently finished tournaments are considered active.
+        j['active'] = True
+    was_active_game |= j['active']
+    res.append(j)
 
-  if not only_active or not tournaments_json:
-    res = tournaments_json
-  else:
-    res = [t for t in tournaments_json
-           if now - t['end_date'] < datetime.timedelta(days=30)]
-    if not res:
-      # no active tournaments, returning last one.
-      res = sorted(tournaments_json, key = lambda t: t['end_date'],
-                   reverse=True)[0]
+  if only_active and res:
+    if was_active_game:
+      res = [t for t in res if t['active']]
+    else:
+      res = [max(res, key=lambda t: t['last_game'])]
   for t in res:
-    del t['end_date']
+    del t['active']
+    t.pop('end_date', None)
   return res
+
+
+def generate_tournament_rounds(pk):
+  """Generates round schedule for a tournament based on the settings.
+
+  Old schedule will be removed if it exists.
+  """
+  tournament = models.Tournament.objects.get(id=pk)
+  base = tournament.roundsgen_games_start
+  cron_expr = tournament.roundsgen_rounds_start_cron
+  round_count = tournament.roundsgen_rounds_count
+  itr = croniter(cron_expr, base)
+  rounds = [itr.get_next(datetime.datetime) for i in range(round_count)]
+  # Delete existing rounds if they exist.
+  models.Round.objects.filter(tournament=tournament).delete()
+  # Add generated rounds.
+  for r in rounds:
+    round = models.Round.objects.create(tournament=tournament, start = r)
+    round.save()

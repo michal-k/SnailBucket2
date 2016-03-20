@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+import datetime
+
 
 class Member(models.Model):
   def __str__(self):
@@ -18,15 +20,14 @@ class Member(models.Model):
   suspended_until = models.DateField(null=True, blank=True,
     help_text='Until what date the user is suspended from games.')
 
-  reliability = models.IntegerField(help_text='Reliability rating.')
+  reliability = models.IntegerField(default=2,
+                                    help_text='Reliability rating.')
 
   preferred_hours = models.CharField(max_length=24, default='y' * 24, help_text=
     '24-character string of format "yyyyyrrrrwwwwwwwwyyyyyyy", UTC-based.')
 
   preferred_control = models.CharField(default='45 45', max_length=100,
     help_text='Comma separated list of "MM SS" time controls.')
-
-  # TODO(crem): Do we need `status` here?
 
 
 class Tournament(models.Model):
@@ -47,23 +48,56 @@ class Tournament(models.Model):
   signup_end = models.DateTimeField(
     help_text='When registration is no longer open.')
 
-  # games_start, rounds_count and rounds_start_cron are only used to generate
-  # 'Round' model, and after that should not be used.
-  # TODO(crem): Remove those fields from the model?
-  games_start = models.DateTimeField(
-    help_text='Round 1 won\'t start before that time')
-
-  rounds_count = models.IntegerField(
-    help_text='Number of rounds in the tournament.')
-
-  rounds_start_cron = models.CharField(max_length=32,
-    help_text='Starting date of every round, in crontab format.')
-
-  min_bucket_size = models.IntegerField(
+  # The bucketgen_* fields are used to generate buckets.
+  bucketgen_min_bucket_size = models.IntegerField(
     help_text='Minimum number of players in a bucket.')
 
-  max_bucket_size = models.IntegerField(
+  bucketgen_max_bucket_size = models.IntegerField(
     help_text='Maximum number of players in a bucket.')
+
+  # The roundsgen_* fields is only used to generate rounds.
+  roundsgen_games_start = models.DateTimeField(
+    help_text='Round 1 won\'t start before that time')
+
+  roundsgen_rounds_count = models.IntegerField(
+    help_text='Number of rounds in the tournament.')
+
+  roundsgen_rounds_start_cron = models.CharField(max_length=32,
+    default='0 0 * * Wed',
+    help_text='Starting date of every round, in crontab format. '
+              'E.g. "0 0 * * Wed" for weekly or "0 0 3 * *" for monthly.')
+
+  def games_left(self):
+    """Returns number of games which don't have played_date set."""
+    return Game.objects.filter(bucket__tournament=self).filter(
+      played_time__isnull=True).count()
+
+  def last_played_game_date(self):
+    game = Game.objects.filter(bucket__tournament=self).filter(
+      played_time__isnull=False).order_by('-played_time')[:1]
+    if not game:
+      return None
+    return game[0].played_time
+
+  def is_active(self):
+    """Returns if a tournament is active.
+
+    The tournament is active if one of those is true:
+       * Signup already started but not finished.
+       * There are rounds which start in a future.
+       * There are games which don't have played_date set.
+    """
+    now = datetime.datetime.now(datetime.timezone.utc)
+    if self.signup_start > now:
+      return False  # Signup not yet started, the tournament is in future.
+    if self.round_set.count() == 0:
+      return True  # Rounds are not yet created, so the tournament is active.
+    # Sort rounds in reverse order by start date.
+    last_round_start = self.round_set.order_by('-start')[0].start
+    if last_round_start > now:
+      return True  # There are rounds which start in a future.
+    # Tournament is active if there are still non-played games.
+    return self.games_left() > 0
 
 
 class Round(models.Model):
@@ -83,18 +117,15 @@ class Bucket(models.Model):
   tds = models.ManyToManyField(Member)
 
 
-class BucketPlayer(models.Model):
-  bucket = models.ForeignKey(Bucket, related_name='players',
-    help_text='Player of which bucket.')
-
-  member = models.ForeignKey(Member, help_text='Which user.')
-
-  # TODO(crem): Do we need `status` here?
-
-
 class TournamentPlayer(models.Model):
-  """ Contains players before the split into buckets occurred. """
+  """ Contains player assignment to tournament / buckets. """
+  def __str__(self):
+    return str(self.member)
+
   tournament = models.ForeignKey(Tournament, related_name='players')
+
+  bucket = models.ForeignKey(Bucket, null=True, blank=True,
+    related_name='players', help_text='Player of which bucket.')
 
   member = models.ForeignKey(Member)
 
@@ -113,11 +144,11 @@ class Game(models.Model):
 
   round = models.IntegerField(help_text='Which round is the game from.')
 
-  white_player = models.ForeignKey(Member, null=True, blank=True,
+  white_player = models.ForeignKey(TournamentPlayer, null=True, blank=True,
     related_name='white_game',
     help_text='Player who plays as white. Can be null in case of a bye.')
 
-  black_player = models.ForeignKey(Member, null=True, blank=True,
+  black_player = models.ForeignKey(TournamentPlayer, null=True, blank=True,
     related_name='black_game',
     help_text='Player who plays as black. Can be null in case of a bye.')
 
@@ -125,7 +156,7 @@ class Game(models.Model):
     help_text='Scheduled date of a game.')
 
   played_time = models.DateTimeField(null=True, blank=True,
-    help_text='Time when then game was finished.')
+    help_text='Time when then game was finished (or adjudicated).')
 
   # TODO(crem) Enumerate possible game results.
   result = models.CharField(max_length=16,
@@ -152,11 +183,3 @@ class GameForumMessage(models.Model):
 
   reset_game_time = models.BooleanField(default=False,
     help_text='Resets the time of a game. Only if game_time = NULL.')
-
-
-
-
-
-
-
-
