@@ -63,6 +63,7 @@ class Tournament(models.Model):
     help_text='Number of rounds in the tournament.')
 
   roundsgen_rounds_start_cron = models.CharField(max_length=32,
+    default='0 0 * * Wed',
     help_text='Starting date of every round, in crontab format. '
               'E.g. "0 0 * * Wed" for weekly or "0 0 3 * *" for monthly.')
 
