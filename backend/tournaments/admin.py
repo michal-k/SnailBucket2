@@ -10,6 +10,7 @@ class TournamentPlayerAdmin(admin.ModelAdmin):
   def bucket_name(self, obj):
     return str(obj.bucket.name)
 
+
 class RoundAdmin(admin.ModelAdmin):
   list_display = ('tournament', 'start')
   list_filter = ('tournament__name', 'start')

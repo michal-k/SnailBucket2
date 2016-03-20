@@ -20,15 +20,14 @@ class Member(models.Model):
   suspended_until = models.DateField(null=True, blank=True,
     help_text='Until what date the user is suspended from games.')
 
-  reliability = models.IntegerField(help_text='Reliability rating.')
+  reliability = models.IntegerField(default=4,
+                                    help_text='Reliability rating.')
 
   preferred_hours = models.CharField(max_length=24, default='y' * 24, help_text=
     '24-character string of format "yyyyyrrrrwwwwwwwwyyyyyyy", UTC-based.')
 
   preferred_control = models.CharField(default='45 45', max_length=100,
     help_text='Comma separated list of "MM SS" time controls.')
-
-  # TODO(crem): Do we need `status` here?
 
 
 class Tournament(models.Model):
