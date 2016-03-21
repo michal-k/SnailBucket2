@@ -1,3 +1,4 @@
+var snailBucketApp = angular.module('snailBucketApp', ['ui.router', 'ui.bootstrap.datetimepicker']);
 
 moment.locale('en', {
   longDateFormat : {
