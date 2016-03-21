@@ -29,16 +29,16 @@
       <li ng-show="tourn.signup == true">
         <a ui-sref="participants({tournId: tourn.id})">Participants</a>
       </li>
-      <li ng-show="tourn.rounds.length > 0">
+      <li ng-show="tourn.started_rounds > 0">
         <a ui-sref="standings({tournId: tourn.id})">
           Standings</a>
       </li>
-      <li ng-show="tourn.rounds.length > 0">Pairings:
-      <ul ng-repeat="round in tourn.rounds">
-        <li><a ui-sref="pairings({tournId: tourn.id, round: round})">Round {{round}}</a></li>
+      <li ng-show="tourn.started_rounds > 0">Pairings:
+      <ul ng-repeat="round in range(tourn.started_rounds) track by $index">
+        <li><a ui-sref="pairings({tournId: tourn.id, round: $index+1})">Round {{$index+1}}</a></li>
       </ul>
       </li>
-      <li ng-show="tourn.rounds.length > 0">
+      <li ng-show="tourn.started_rounds > 0">
         <a ui-sref="pending({tournId: tourn.id})">Pending games</a></li>
       <li><a href="">Tournament guide</a></li>
       </ul>
