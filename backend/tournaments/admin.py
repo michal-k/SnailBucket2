@@ -6,12 +6,8 @@ from .models import *
 from .tools import generate_tournament_rounds
 
 class TournamentPlayerAdmin(admin.ModelAdmin):
-  list_display = ('member', 'tournament_name', 'bucket_name')
+  list_display = ('member', 'tournament', 'bucket')
   list_filter = ('bucket', 'member')
-  def tournament_name(self, obj):
-    return str(obj.bucket.tournament)
-  def bucket_name(self, obj):
-    return str(obj.bucket.name)
 
 
 class RoundAdmin(admin.ModelAdmin):
