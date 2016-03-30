@@ -89,6 +89,7 @@ def get_tournament_buckets(tournament):
       for m in b.players.all() ] }
       for b in buckets ]
 
+
 def get_tournament_participants(tournament):
   """Return the list of participants for a given tournament.
 
@@ -226,9 +227,14 @@ def get_pairings(tournament, round):
    }
 
   Throws:
-    NotFound -- if tournament is not found.   
+    NotFound -- if tournament or round is not found.   
   """
+  round = int(round)
   tournament = get_tournament(tournament)
+  tournaments_round_count = tournament.round_set.count()
+  if round < 1 or round > tournaments_round_count:
+    raise NotFound("Tournament [%s] does not have round %d." % 
+      (tournament, round))
   res = {
     'tournament_id': tournament.short_name,
     'tournament_name': tournament.name,
