@@ -21,9 +21,20 @@ def get_buckets(request, tournament):
   return HttpResponse(json.dumps(res))
 
 
+def get_pairings(request, tournament, round):
+  try:
+    res = tools.get_pairings(tournament, round)
+  except tools.NotFound:
+    raise Http404
+  return HttpResponse(json.dumps(res))
+
+
 def add_forum_message(request, game_id):
   try:
     game = tools.get_game(game_id)
+    if not request.user.is_authenticated():
+      raise PermissionDenied('User not authenticated')
+
     member = tools.get_member(request.user)
 
     query = request.GET

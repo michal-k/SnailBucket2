@@ -89,6 +89,7 @@ def get_tournament_buckets(tournament):
       for m in b.players.all() ] }
       for b in buckets ]
 
+
 def get_tournament_participants(tournament):
   """Return the list of participants for a given tournament.
 
@@ -195,6 +196,67 @@ def get_tournaments(only_active=False):
   for t in res:
     del t['active']
     t.pop('end_date', None)
+  return res
+
+
+def get_pairings(tournament, round):
+  """Returns pairings for a given round.
+
+  Arguments:
+   tournament -- tournament id
+   round -- index of a round (1-based)
+
+  Return:
+   Dictionary: {
+     'tournament_id': <id>
+     'tournament_name': <long tournament name>
+     'round': round index,
+     'buckets': [{
+       'bucket': <bucket name>,
+       'games': [{
+          'id': <game id>
+          'white': <white player username, or None if round is bye>,
+          'black': <black player username, or None if round is bye>,
+          'white_country': <white player country code, or None>
+          'black_country': <black player country code, or None>
+          'result': <string which represents the game result>
+          'scheduled_time': <timestamp of the game scheduled date>
+          'played_time': <timestamp of the game finish date>
+       }]
+     }]
+   }
+
+  Throws:
+    NotFound -- if tournament or round is not found.   
+  """
+  round = int(round)
+  tournament = get_tournament(tournament)
+  tournaments_round_count = tournament.round_set.count()
+  if round < 1 or round > tournaments_round_count:
+    raise NotFound("Tournament [%s] does not have round %d." % 
+      (tournament, round))
+  res = {
+    'tournament_id': tournament.short_name,
+    'tournament_name': tournament.name,
+    'round': round,
+    'buckets': []}
+  for b in tournament.bucket_set.all():
+    bucket = {'bucket': b.name, 'games': []}
+    res['buckets'].append(bucket)
+    games = bucket['games']
+    for g in b.game_set.filter(round=round):
+      games.append({
+        'id': g.id,
+        'white': g.white_player.member.name(),
+        'white_country': (g.white_player.member.country
+                         if g.white_player else None),
+        'black': g.black_player.member.name(),
+        'black_country': (g.black_player.member.country
+                         if g.black_player else None),        
+        'scheduled_time': (g.scheduled_time.timestamp()
+                           if g.scheduled_time else None),
+        'played_time': g.played_time.timestamp() if g.played_time else None,
+        'result': g.result})
   return res
 
 
