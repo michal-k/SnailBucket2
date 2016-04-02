@@ -89,6 +89,11 @@ snailBucketApp.filter('toFlag', function() {
 
 snailBucketApp.controller('TournamentsCtrl', function ($scope, $http) {
 
+  // A function to emulate for (i=0;i<n;i++) loop in AngularJS.
+  $scope.range = function(n) {
+    return new Array(n);
+  };
+
   $scope.getDateType = function(dateString) {
     if (dateString == 'now') {
       return 'now';
@@ -118,21 +123,11 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope, $http) {
     return hours + ' hours ' + minutes + ' minutes';
   };
 
-  // Replace with reading from the backend.
-  $scope.tournaments = [
-    {
-      'id': 'foo',
-      'name': 'Snail Bucket Monthly 2015',
-      'rounds': ['1'],
-      'signup': false
-    },
-    {
-      'id': 'frf',
-      'name': 'Snail Bucket 4',
-      'rounds': [],
-      'signup': true
-    }
-  ];
+  $scope.tournaments = []
+  $http.get('/data/tournaments').then(
+      function successCallback(response) {
+        $scope.tournaments = response.data
+      });
 
   $scope.setCurrTourn = function(currTournId) {
     for (i = 0; i < $scope.tournaments.length; i++) {
@@ -143,7 +138,6 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope, $http) {
     }
   };
 
-  // Replace with reading from the backend.
   $scope.getParticipants = function(tournId) {
     $scope.participants = []
     $http.get('/data/participants/' + tournId).then(
@@ -281,9 +275,9 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope, $http) {
   // Replace with reading from the backend.
   $scope.getPairings = function(tournId, round) {
     switch(tournId) {
-      case '3':
+      case 'frf':
         $scope.pairing = {
-          'tournId' : 3,
+          'tournId' : 'foo',
           'name': 'Snail Bucket Monthly 2015',
           'round': 1,
           'buckets': [
