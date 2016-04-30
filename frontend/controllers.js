@@ -184,9 +184,9 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope, $http) {
           }]
         };
         break;
-      case 'frf':
+      case 'sb4':
         $scope.standing = {
-          'tournId': 'frf',
+          'tournId': 'sb4',
           'name': 'Snail Bucket 4',
           'headers': [
             {'text': 'No', 'width': '30px'},
@@ -226,14 +226,14 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope, $http) {
   // Replace with reading from the backend.
   $scope.getPending = function(tournId) {
     switch(tournId) {
-      case '3':
+      case 'sd':
         $scope.pending = [
           {
             'white': 'SportClubRecife',
             'whiteFl': 'fl:br',
             'black': 'juoni',
             'blackFl': 'fl:--',
-            'date': '2015-10-10 15:00',
+            'date': '2016-03-10 15:00',
             'time': '45 45',
             'round': 2,
             'bucket': 'Alekhine'            
@@ -275,10 +275,10 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope, $http) {
   // Replace with reading from the backend.
   $scope.getPairings = function(tournId, round) {
     switch(tournId) {
-      case 'frf':
+      case 'sd':
         $scope.pairing = {
-          'tournId' : 'foo',
-          'name': 'Snail Bucket Monthly 2015',
+          'tournId' : 'sd',
+          'name': 'Snail Demo',
           'round': 1,
           'buckets': [
           {
