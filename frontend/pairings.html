@@ -1,12 +1,11 @@
-<div ng-init="getPairings(currTournId, currRound)">
 <h1>{{pairing.name}}</h1>
-<div ng-repeat="bucket in pairing.buckets">
+<div ng-repeat="bucket in pairings.buckets">
 <h3>Bucket {{bucket.name}}</h3>
 <table class="border margin">
 <tr ng-repeat="game in bucket.games">
   <td class="border" style="width: 170px">
     <span style="width: 20px">
-      <img src="images/flags/{{game.whCountry}}.png" alt="{{game.whCountry}}"></img>
+      <img src="images/flags/{{game.white_country}}.png" alt="{{game.white_country}}"></img>
     </span>
     {{game.white}}
  </td>
@@ -16,7 +15,7 @@
   </a></td>
   <td class="border" style="width: 170px">
     <span style="width: 20px">
-      <img src="images/flags/{{game.blCountry}}.png" alt="{{game.blCountry}}"></img>
+      <img src="images/flags/{{game.black_country}}.png" alt="{{game.black_country}}"></img>
     </span>
     {{game.black}}</td>
   <td class="border center" style="width: 80px">

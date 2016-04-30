@@ -54,6 +54,7 @@ snailBucketApp.config(function($stateProvider, $urlRouterProvider) {
       url: '/t/:tournId/pairings/:round',
       templateUrl: 'pairings.html',
       controller: function($scope, $stateParams) {
+        $scope.getPairings($stateParams.tournId, $stateParams.round);
         $scope.currTournId = $stateParams.tournId;
         $scope.currRound = $stateParams.round;
       }
@@ -274,61 +275,11 @@ snailBucketApp.controller('TournamentsCtrl', function ($scope, $http) {
 
   // Replace with reading from the backend.
   $scope.getPairings = function(tournId, round) {
-    switch(tournId) {
-      case 'sd':
-        $scope.pairing = {
-          'tournId' : 'sd',
-          'name': 'Snail Demo',
-          'round': 1,
-          'buckets': [
-          {
-            'name': 'Havana',
-            'games': [
-              {
-                'id': 1,
-                'white': 'PankracyRozumek',
-                'black': 'pchesso',
-                'whCountry': 'pl',
-                'blCountry': 'de',
-                'result': '1/2-1/2',
-                'date': '',
-              },
-              {
-                'id': 2,
-                'white': 'BethanyGrace',
-                'black': 'Nitreb',
-                'whCountry': 'us',
-                'blCountry': 'ca',
-                'result': '',
-                'date': '2015-09-30 12:34',
-              }
-            ]
-          },
-          {
-            'name': 'Reykjavik',
-            'games': [
-              {
-                'id': 3,
-                'white': 'crem',
-                'black': 'nitedozer',
-                'whCountry': 'by',
-                'blCountry': 'us',
-                'result': '',
-                'date': '',
-              },
-              {
-                'id': 4,
-                'white': 'RoyRogersC',
-                'black': 'marjohn',
-                'whCountry': 'us',
-                'blCountry': 'gr',
-                'result': '+:-',
-                'date': '',
-              }
-            ]
-          }]
-        }
-    }
+    $scope.participants = []
+    $http.get('/data/pairings/' + tournId + '/' + round).then(
+        function successCallback(response) {
+          $scope.pairings = response.data
+        });
   };
 
   // Replace with reading from the backend.
