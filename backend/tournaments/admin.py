@@ -1,3 +1,4 @@
+from django import forms
 from django.conf.urls import url
 from django.contrib import admin
 from django.shortcuts import redirect
@@ -38,7 +39,21 @@ class TournamentAdmin(admin.ModelAdmin):
     return redirect('../change/')
 
 
+class GameForm(forms.ModelForm):
+  class Meta:
+    model = Game
+    fields = '__all__'
+
+  def __init__(self, *args, **kwargs):
+    super(GameForm, self).__init__(*args, **kwargs)
+    if 'instance' in kwargs:
+      for p in ['white_player', 'black_player']:
+        self.fields[p].queryset = TournamentPlayer.objects.filter(
+            bucket = kwargs['instance'].bucket)
+
+
 class GameAdmin(admin.ModelAdmin):
+  form = GameForm
   list_display = ('bucket', 'round', 'white_player', 'black_player', 'result')
   list_filter = ('bucket__tournament__name', 'bucket__name', 
                  'round', 'white_player', 'black_player', 'result')
