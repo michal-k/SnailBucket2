@@ -161,9 +161,8 @@ class Game(models.Model):
   # TODO(crem) Enumerate possible game results.
   result = models.CharField(max_length=16,
     help_text='Game status/result.', choices=(
-      ('1-0','1-0'), ('i-o','i-o'), ('+:-','+:-'), ('0-1','0-1'), ('o-i','o-i'),
-      ('-:+','-:+'), ('o-o','o-o'), ('-:-','-:-'), ('1/2-1/2', '1/2-1/2'),
-      ('i/2-i/2', 'i/2-i/2')), null=True, blank=True)
+      ('1-0','1-0'), ('+:-','+:-'), ('0-1','0-1'), ('-:+','-:+'), ('-:-','-:-'),
+      ('1/2-1/2', '1/2-1/2')), null=True, blank=True)
 
   pgn = models.TextField(null=True, blank=True, help_text='Game in PGN format.')
 
