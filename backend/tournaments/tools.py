@@ -1,6 +1,8 @@
 from . import models
 from croniter import croniter
+from operator import itemgetter
 import datetime
+import math
 
 class NotFound(Exception):
   """Exception which is thrown when something is not found."""
@@ -8,6 +10,10 @@ class NotFound(Exception):
 
 class PermissionDenied(Exception):
   """Exception thrown when someone doesn't have permission to do something."""
+
+
+class InvalidParameters(Exception):
+  """Exception thrown when output of the function cannot be calculated for given input."""
 
 
 def get_tournament(tournament):
@@ -91,7 +97,7 @@ def get_tournament_buckets(tournament):
 
 
 def get_tournament_participants(tournament):
-  """Return the list of participants for a given tournament.
+  """Return the list of participants for a given tournament, sorted by rating (descending).
 
   Arguments:
     tournament -- short_name of a tournament.
@@ -100,13 +106,14 @@ def get_tournament_participants(tournament):
          'country': <country_code>,
          'rating': <player_rating>}, ...]
   Throws:
-    NotFound -- if tournamnet is not found.
+    NotFound -- if tournament is not found.
   """
-  return [ 
+  return sorted([ 
       { 'name': player.member.name(),
         'rating': player.fixed_rating,
         'country': player.member.country }
-    for player in get_tournament(tournament).players.all()]
+    for player in get_tournament(tournament).players.all()],
+    key=itemgetter('rating'), reverse=True)
 
 
 def add_forum_message(game, member, text='',
@@ -277,3 +284,67 @@ def generate_tournament_rounds(pk):
   for r in rounds:
     round = models.Round.objects.create(tournament=tournament, start = r)
     round.save()
+
+def generate_buckets(pk):
+  """Generates buckets by assigning players to them.
+  
+  Throws:
+    InvalidParameters -- if not possible to create RR tournament with given
+      minimum and maximum players.
+  """
+  tournament = models.Tournament.objects.get(id=pk)
+  players = get_tournament_participants(pk)
+  sizes = generate_bucket_sizes(tournament, len(players))
+  idx = 0
+  for size in sizes:
+    # TODO(michal): finish this function
+    # players[idx, idx + size] will become a bucket to be serialized
+    idx += size
+
+def generate_bucket_sizes(tournament, player_count):
+  if tournament.type_code == "RR":
+    # Divide players into groups between min_size and max_size.
+    min_size = tournament.bucketgen_min_bucket_size
+    max_size = tournament.bucketgen_max_bucket_size
+    bucket_count =  (player_count - 1) // max_size + 1
+    larger_bucket_count = player_count - min_size * bucket_count
+    if larger_bucket_count < 0:
+      raise InvalidParameters("Cannot create buckets for %s tournament." % tournament)
+    smaller_bucket_count = bucket_count - larger_bucket_count
+    if smaller_bucket_count == 0:
+      return [max_size] * larger_bucket_count
+    # Prefer to have smaller last bucket because of large rating differences.
+    if smaller_bucket_count == 1:
+      return [max_size] * larger_bucket_count + [min_size]
+    # The second step is to have smaller first bucket.
+    if smaller_bucket_count == 2:
+      return [min_size] + [max_size] * larger_bucket_count + [min_size]
+    return [min_size] * (smaller_bucket_count - 1) + [max_size] * larger_bucket_count + [min_size]
+
+
+  elif tournament.type_code == "Swiss":
+    # Divide players into groups between between 2**(rounds-1) and 2**rounds preferring even
+    # number groups.
+    max_size = 2 ** tournament.roundsgen_round_count
+    bucket_count =  (player_count - 1) // max_size + 1
+    max_players_per_bucket = math.ceil(player_count / bucket_count)
+    min_players_per_bucket = math.floor(player_count / bucket_count)
+    larger_bucket_count = player_count - min_players_per_bucket * bucket_count
+    smaller_bucket_count = bucket_count - larger_bucket_count
+
+    bucket_sizes = ([max_players_per_bucket] * larger_bucket_count +
+        [min_players_per_bucket] * smaller_bucket_count)
+     
+    # Redistribute players to get even-sized buckets.
+    for i in range(len(bucket_sizes) - 1):
+      if bucket_sizes[i] % 2 == 1 and bucket_sizes[i + 1] % 2 == 1:
+        bucket_sizes[i] += 1
+        bucket_sizes[i + 1] -= 1
+        i += 1
+
+    return bucket_sizes
+
+  return []  # Unrecognized tournament type.
+  
+
+
